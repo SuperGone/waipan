@@ -1,0 +1,150 @@
+{include file="header" /}
+<body class="me">
+    <!-- 头部 -->
+    {include file="top" /}
+    <div class="main_box">
+        <!-- 左侧栏 -->
+        {include file="userleft" /}
+        <!-- 中间主体 -->
+        <div class="usermain">
+            <div class="reset">
+               <form method="post" id="form1" action="/index/user/editinfo">
+                    <div class="from_group">
+                        <span class="mrr">手机号</span><input class="reset_input username" placeholder="请输入手机号" type="text" name="username">
+                        <span class="send code_btn" onclick ="return get_svg();">发送</span>
+                    </div>
+                    <div class="from_group">
+                        <span class="mrr">验证码</span><input class="reset_input" placeholder="请输入短信验证码" type="text" name="phonecode">
+                    </div>
+                    <div class="from_group">
+                        <span class="mrr">新密码</span><input class="reset_input" type="password" name="newpwd" placeholder="输入新密码,留空则不修改">
+                    </div>
+                    <div class="from_group">
+                        <span>确认密码</span><input class="reset_input" type="password" name="newpwd2" placeholder="重复新密码,留空则不修改">
+                    </div>
+                    <div class="from_group">
+                        <span>实名认证</span>
+                        {if $userinfo.is_smrz == 2}
+                            <i class="iconfont icon-yirenzheng yrz"></i><span class="yrz lm">已认证</span>
+                            {elseif $userinfo.is_smrz == 0/}
+                            <a href="{:url('autonym')}"><i class="iconfont icon-weirenzheng1 wrz"></i><span class="wrz lm">未认证</span></a>
+                            {elseif $userinfo.is_smrz == 1/}
+                            <i class="iconfont icon-weirenzheng1 wrz"></i><span class="wrz lm">审核中</span>
+                            {elseif $userinfo.is_smrz == 3/}
+                            <a href="{:url('autonym')}"><i class="iconfont icon-weirenzheng wtg"></i><span class="wtg lm">未通过</span></a>
+                            {/if}
+                    </div>
+                    <input class="submit" type="button" onclick="sb();" value="确定修改">
+                </form>
+                
+            </div>
+        </div>
+    </div>
+
+<script>
+function sc(){
+    var animateimg = $("#f").val(); //获取上传的图片名 带//
+    var imgarr=animateimg.split('\\'); //分割
+    var myimg=imgarr[imgarr.length-1]; //去掉 // 获取图片名
+    var houzui = myimg.lastIndexOf('.'); //获取 . 出现的位置
+    var ext = myimg.substring(houzui, myimg.length).toUpperCase();  //切割 . 获取文件后缀
+    
+    var file = $('#f').get(0).files[0]; //获取上传的文件
+    var fileSize = file.size;           //获取上传的文件大小
+    var maxSize = 10485760;              //最大1MB
+    if(ext !='.PNG' && ext !='.GIF' && ext !='.JPG' && ext !='.JPEG' && ext !='.BMP'){
+        parent.layer.msg('文件类型错误,请上传图片类型');
+        return false;
+    }else if(parseInt(fileSize) >= parseInt(maxSize)){
+        parent.layer.msg('上传的文件不能超过10MB');
+        return false;
+    }else{  
+        var data = new FormData($('#form1')[0]); 
+        $.ajax({  
+            url: "/index/user/uploadimg", 
+            type: 'POST',  
+            data: data,  
+            dataType: 'JSON',  
+            cache: false,  
+            processData: false,  
+            contentType: false  
+        }).done(function(ret){  
+            if(ret['isSuccess']){
+                var result = '';
+                var result1 = '';
+                // $("#show").attr('value',+ ret['f'] +);
+                result += '<img src="' + '/public/' + ret['f']  + '"  onclick="f.click()" height="100" width="100">';
+                result1 += '<input value="' + ret['f']  + '" name="portrait" style="display:none;">';
+                $('#result').html(result);
+                $('#show').html(result1);
+                layer.msg('上传成功');
+            }else{  
+                layer.msg('上传失败');
+            }  
+        });  
+        return false;
+       }  
+    }
+
+
+
+    function sb(){
+    	var data = $('#form1').serialize();
+		  var formurl = "{:Url('index/user/editinfo')}";
+		  var locurl = "{:Url('index/user/editinfo')}";
+
+		    WPpost(formurl,data,locurl);
+		    return false;
+    }
+  
+  
+  
+
+/**
+ * 发送验证码
+ * @return {[type]} [description]
+ */
+function get_svg() {
+  
+  
+  var phone = $('.username').val();
+
+  if(!(/^1[34578]\d{9}$/.test(phone))){
+        layer.msg("请正确输入手机号！");
+        return false;
+    }
+  var url = "/index/login/sendmsm/phone/"+phone+"/moban/44";
+  $.get(url,function(resdata){
+    console.log(resdata);
+    layer.msg(resdata.data);
+    if(resdata.type == 1){
+      $(".code_btn").attr('onclick',"return false;");
+      listion_sendmsm();
+    }
+  })
+  return false;
+}
+
+function listion_sendmsm(){
+
+   var time= 61;
+    setTime=setInterval(function(){
+        if(time<=1){
+            clearInterval(setTime);
+            $(".code_btn").text("再发一次");
+            $(".code_btn").attr('onclick',"return get_svg();");
+            return;
+        }
+        time--;
+        $(".code_btn").text(time+"s");
+
+    },1000);
+}
+
+  
+  
+</script>
+ <!-- 页脚 -->
+    {include file="footer" /}
+</body>
+</html>

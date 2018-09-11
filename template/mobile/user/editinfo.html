@@ -1,0 +1,141 @@
+{include file="header" /}
+
+<body>
+<div class="loginbody">
+	<div class="codehead">
+        <a href="javascript:history.go(-1);"><img class="fl" src="__HOME__/images/back.png"></a>
+        <span>修改资料</span>
+    </div>
+    <div class="main">
+    	<form method="post" id="form1" action="/mobile/user/editinfo">
+    		<div class="xgtx">
+	          <span class="card_item">修改头像</span>
+	          <span id="result"><img src="/public/{$userinfo.portrait}" onclick="f.click()" height="100" width="100"></span>
+	          <input type="file" id="f" name="f" onchange="sc(this);" style="display:none"/>
+	          <div id="show"></div>
+	        </div>
+	      	<ul class="card_detail">
+                        
+		        <li>
+		          <span class="card_item">手机号</span>
+		           <input type="text" class="username phone" name="username" placeholder="请输入您的手机号">
+                           <span class="send_yzm code_btn" onclick ="return get_svg();">发送</span>
+                        </li>
+                            
+		        <li>
+		          <span class="card_item">验证码</span>
+		          <input type="text" class="username" name="phonecode" placeholder="请输入您的验证码"></li>
+		         <li> <span class="card_item">新密码</span>
+		          <input class="card_input" type="password" name="newpwd" placeholder="输入新密码,留空则不修改"></li>
+		        <li>
+		          <span class="card_item">重复密码</span>
+		          <input class="card_input" type="password" name="newpwd2" placeholder="重复新密码,留空则不修改">
+		      	</li>
+		      </ul>
+	      	<div class="xgtx">
+	      		<span class="card_item">实名认证</span>
+	      		{if $userinfo.is_smrz == 2}
+	      		<i class="iconfont icon-yirenzheng yrz"></i><span class="yrz lm">已认证</span>
+	      		{elseif $userinfo.is_smrz == 0/}
+	      		<a href="{:url('autonym')}"><i class="iconfont icon-weirenzheng1 wrz"></i><span class="wrz lm">未认证</span></a>
+	      		{elseif $userinfo.is_smrz == 1/}
+	      		<i class="iconfont icon-weirenzheng1 wrz"></i><span class="wrz lm">审核中</span>
+	      		{elseif $userinfo.is_smrz == 3/}
+	      		<a href="{:url('autonym')}"><i class="iconfont icon-weirenzheng wtg"></i><span class="wtg lm">未通过</span></a>
+	      		{/if}
+	      	</div>
+	        
+	      <input class="submit" type="button" onclick="sb();" value="确定修改">
+	      </form>
+    </div>
+
+
+
+</div>
+<script>
+function sc(){
+    var animateimg = $("#f").val(); //获取上传的图片名 带//
+    var imgarr=animateimg.split('\\'); //分割
+    var myimg=imgarr[imgarr.length-1]; //去掉 // 获取图片名
+    var houzui = myimg.lastIndexOf('.'); //获取 . 出现的位置
+    var ext = myimg.substring(houzui, myimg.length).toUpperCase();  //切割 . 获取文件后缀
+    
+    var file = $('#f').get(0).files[0]; //获取上传的文件
+    var fileSize = file.size;           //获取上传的文件大小
+    var maxSize = 10485760;              //最大1MB
+    
+        var data = new FormData($('#form1')[0]); 
+        $.ajax({  
+            url: "/index/user/uploadimg", 
+            type: 'POST',  
+            data: data,  
+            dataType: 'JSON',  
+            cache: false,  
+            processData: false,  
+            contentType: false  
+        }).done(function(ret){  
+            if(ret['isSuccess']){
+                var result = '';
+                var result1 = '';
+                // $("#show").attr('value',+ ret['f'] +);
+                result += '<img src="' + '/public/' + ret['f']  + '"  onclick="f.click()" height="100" width="100">';
+                result1 += '<input value="' + ret['f']  + '" name="portrait" style="display:none;">';
+                $('#result').html(result);
+                $('#show').html(result1);
+                layer.msg('上传成功');
+            }else{  
+                layer.msg('上传失败');
+            }  
+        });  
+        return false;
+       
+    }
+    function sb(){
+    	var data = $('#form1').serialize();
+		  var formurl = "{:Url('index/user/editinfo')}";
+		  var locurl = "{:Url('index/user/editinfo')}";
+		    WPpost(formurl,data,locurl);
+		    return false;
+    }
+/**
+ * 发送验证码
+ * @return {[type]} [description]
+ */
+function get_svg() {
+  var phone = $('.username').val();
+  if(!(/^1[34578]\d{9}$/.test(phone))){
+        layer.msg("请正确输入手机号！");
+        return false;
+    }
+  var url = "/index/login/sendmsm/phone/"+phone+"/moban/44";
+  $.get(url,function(resdata){
+    console.log(resdata);
+    layer.msg(resdata.data);
+    if(resdata.type == 1){
+      $(".code_btn").attr('onclick',"return false;");
+      listion_sendmsm();
+    }
+  })
+  return false;
+}
+
+function listion_sendmsm(){
+
+   var time= 61;
+    setTime=setInterval(function(){
+        if(time<=1){
+            clearInterval(setTime);
+            $(".code_btn").text("再发一次");
+            $(".code_btn").attr('onclick',"return get_svg();");
+            return;
+        }
+        time--;
+        $(".code_btn").text(time+"s");
+
+    },1000);
+}
+
+</script>
+{include file="foot" /}
+</body>
+</html>

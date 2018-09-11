@@ -1,0 +1,60 @@
+{include file="header" /}
+<body class="me">
+    <!-- 头部 -->
+    {include file="top" /}
+    <div class="main_box">
+        <!-- 左侧栏 -->
+       {include file="userleft" /}
+        <!-- 中间主体 -->
+        <div class="usermain right_userpay">
+            <div class="chongzhi">
+                <div class="ul_title"><span></span>请选择充值金额</div>
+                <form action="{:url('/index/user/qswlpay')}" method="post" id="postform">
+                    <input class="number" type="text" id="price" name="price" readonly="readonly">
+                    <input type="hidden" name="user" id="user" value="{$userinfo.uid}">
+                    <span class="input_tips">*选择下方要充值的金额</span>
+                
+                <ul class="chong">
+                    {volist name="reg_push" id="vo"}
+                        <li>
+                            <span class="small">{$vo}元</span> 
+                        </li>
+                    {/volist}
+                </ul>
+                <div class="ul_title"><span></span>选择充值方式</div>
+                <ul class="pay">
+                    <li>
+                        <i class="zfb"></i>
+                        <div class="detail">
+                            <div class="name">支付宝钱包</div>
+                            <div class="info">支持支付宝余额和银行卡充值</div>
+                        </div>
+                        <input class="radio" type="radio" name="type" value="alipay"> 
+                    </li>
+                    <li>
+                        <i class="wx"></i>
+                        <div class="detail">
+                            <div class="name">微信支付</div>
+                            <div class="info">支持微信余额和银行卡充值</div>
+                        </div>
+                        <input class="radio" group="type" type="radio" name="type" value="wxpay"> 
+                    </li>
+                </ul>
+                <input class="submit" type="submit" name="submit" value="确定">
+        </form>
+            </div>
+        </div>
+    </div>
+    <!-- 页脚 -->
+    {include file="footer" /}
+</body>
+<script type="text/javascript">
+        $(function(){
+            $(".chong li").click(function(){
+                var txt = $(this).find("span").text();
+                var reg=/[\u4E00-\u9FA5]/g;
+                $("#price").val(txt.replace(reg,''));
+            });
+        });
+    </script>
+</html>

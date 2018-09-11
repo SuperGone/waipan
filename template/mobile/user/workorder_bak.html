@@ -1,0 +1,207 @@
+{include file="header" /}
+
+<body>
+  <div class="code_body ">
+  	<div class="codehead kffixd">
+  		<a href="javascript:history.go(-1);"><img class="fl" src="__HOME__/images/back.png"></a>
+  		<span>客服工单</span>
+  	</div>
+  	
+        <div style="padding-top:60px;">
+            
+            <form method="post" action="" onsubmit="return workorder();">
+	      	<ul class="workinputdiv">
+		         <li>
+                             <span class="">工单类型：</span>
+                             <select name="work_type">
+                                 <option value="账目异常">账目异常</option>
+                                 <option value="功能异常">功能异常</option>
+                                 <option value="操作异常">操作异常</option>
+                                 <option value="充值异常">充值异常</option>
+                                 <option value="提现异常">提现异常</option>
+                                 <option value="用户举报">用户举报</option>
+                             </select>
+                         
+                         </li>
+		        <li>
+		          <span class="">工单内容：</span>
+                          <textarea name="work_content" placeholder="工单内容" required=""></textarea>
+		      	</li>
+		      </ul>
+
+	      <input class="submit" type="submit" value="提交">
+	    </form>
+        </div>
+      <div>
+          <span>历史工单</span>
+                   <table class="work_log_list">
+                    <thead>
+                        <tr>
+                            <th>时间</th>
+                            <th>类型</th>
+                            <th>状态</th>
+                            <th>详情</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {foreach name="workorder_list" item="v"}
+                        <tr>
+                            <td>{$v.time|date="Y-m-d H:i:s",###}</td>
+                            <td>{$v.type}</td>
+                            <td>{if condition="$v.state eq '0'"}待查{elseif condition="$v.state eq '1'")}进行中{else/}处理完成{/if}</td>
+                            <td><a href="{:url('user/workorder_view',array('id'=>$v.id))}">查看</a></td>
+                            
+                        </tr>
+                        {/foreach}
+                    </tbody>
+                </table>
+      </div>
+  	
+  </div>
+    <script>
+        function workorder()
+        {
+              $.ajax({
+                        type: "POST",
+                        url: "{:url('user/workorder')}",
+                        data: {
+                            'work_type': $('select[name=work_type]').val(),
+                            'work_content': $('textarea[name=work_content]').val(),
+                        },
+                        dataType: "json",
+                        success: function (e) {
+                            layer.msg(e.msg);
+                            if(e.status=="200"){
+                                location.reload();
+                            }
+                        }
+                         })
+            return false;
+        }
+    </script>
+    <style>
+        .work_log_list{width:100%;}
+        .work_log_list th{
+            width: 25%;
+    background: #dcdcdc70;
+    height: 27px;
+        }
+        .work_log_list td{
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .workinputdiv{
+            
+        }
+        .workinputdiv select{
+            width: 75%;
+            height: 33px;
+            border-radius: 5px;
+            border: 1px solid #e2e0e0;
+        }
+        .workinputdiv textarea{
+                font-size: 15px;
+                width: 75%;
+    height: 108px;
+    border-radius: 5px;
+    border: 1px solid #e2e0e0;
+        }
+        .workinputdiv li {
+            padding: 25px;
+            background: #fff;
+            border-bottom: 1px solid #d8d8d8;
+        }
+        .workinputdiv li span {
+            float: left;
+        }
+        
+        
+    </style>
+    
+    
+    
+    
+    
+
+<div class="livechat-girl animated"> <img class="girl" src="__HOME__/images/en_3.png">
+  <div class="livechat-hint rd-notice-tooltip rd-notice-type-success rd-notice-position-left single-line show_hint">
+    <div class="rd-notice-content">嘿，我来帮您！</div>
+  </div>
+  <div class="animated-circles">
+    <div class="circle c-1"></div>
+    <div class="circle c-2"></div>
+    <div class="circle c-3"></div>
+  </div>
+</div>
+    <style>
+        
+.animated { -webkit-animation-duration: .5s; animation-duration: .5s; -webkit-animation-fill-mode: both; animation-fill-mode: both }
+.livechat-girl { width: 60px; height: 60px; border-radius: 50%; position: fixed; bottom: 35px; right: 5%; opacity: 0; -webkit-box-shadow: 0 5px 10px 0 rgba(35,50,56,.3); box-shadow: 0 5px 10px 0 rgba(35,50,56,.3); z-index: 700; transform: translateY(0); -webkit-transform: translateY(0); -ms-transform: translateY(0); cursor: pointer; -webkit-transition: all 1s cubic-bezier(.86, 0, .07, 1); transition: all 1s cubic-bezier(.86, 0, .07, 1) }
+.livechat-girl:focus { outline: 0 }
+.livechat-girl.animated { opacity: 1; transform: translateY(-40px); -webkit-transform: translateY(-40px); -ms-transform: translateY(-40px) }
+.livechat-girl:after { content: ''; width: 12px; height: 12px; border-radius: 50%; background-image: linear-gradient(to bottom, #26c7fc, #26c7fc); position: absolute; right: 1px; top: 1px; z-index: 50 }
+.livechat-girl .girl { position: absolute; top: 0; left: 0; width: 100%; height: auto; z-index: 50 }
+.livechat-girl .animated-circles .circle { background: rgba(38,199,252,.25); width: 60px; height: 60px; border-radius: 50%; position: absolute; z-index: 49; transform: scale(1); -webkit-transform: scale(1) }
+.livechat-girl .animated-circles.animated .c-1 { animation: 2s scaleToggleOne cubic-bezier(.25, .46, .45, .94) forwards }
+.livechat-girl .animated-circles.animated .c-2 { animation: 2.5s scaleToggleTwo cubic-bezier(.25, .46, .45, .94) forwards }
+.livechat-girl .animated-circles.animated .c-3 { animation: 3s scaleToggleThree cubic-bezier(.25, .46, .45, .94) forwards }
+.livechat-girl.animation-stopped .circle { opacity: 0!important }
+.livechat-girl.animation-stopped .circle { opacity: 0!important }
+.livechat-girl .livechat-hint { position: absolute; right: 40px; top: 50%; margin-top: -20px; opacity: 0; z-index: 0; -webkit-transition: all .3s cubic-bezier(.86, 0, .07, 1); transition: all .3s cubic-bezier(.86, 0, .07, 1) }
+.livechat-girl .livechat-hint.show_hint { -webkit-transform: translateX(-40px); transform: translateX(-40px); opacity: 1 }
+.livechat-girl .livechat-hint.hide_hint { opacity: 0; -webkit-transform: translateX(0); transform: translateX(0) }
+.livechat-girl .livechat-hint.rd-notice-tooltip { max-width: 1296px!important }
+.livechat-girl .livechat-hint.rd-notice-tooltip .rd-notice-content { width: auto; overflow: hidden; text-overflow: ellipsis }
+@media only screen and (max-width:1599px) {
+.livechat-girl .livechat-hint.rd-notice-tooltip { max-width: 1060px!important }
+}
+@media only screen and (max-width:1309px) {
+.livechat-girl .livechat-hint.rd-notice-tooltip { max-width: 984px!important }
+}
+@media only screen and (max-width:1124px) {
+.livechat-girl .livechat-hint.rd-notice-tooltip { max-width: 600px!important }
+}
+.rd-notice-tooltip { -webkit-box-shadow: 0 2px 2px rgba(0,0,0,.2); box-shadow: 0 2px 2px rgba(0,0,0,.2); font-size: 14px; border-radius: 3px; line-height: 1.25; position: absolute; z-index: 65; max-width: 350px; opacity: 1 }
+.rd-notice-tooltip:after { position: absolute; display: block; content: ''; height: 20px; width: 20px; -webkit-box-shadow: none; box-shadow: none; -webkit-transform: rotate(-45deg); -moz-transform: rotate(-45deg); -ms-transform: rotate(-45deg); -o-transform: rotate(-45deg); transform: rotate(-45deg); -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; z-index: 50 }
+.rd-notice-tooltip .rd-notice-content { background: 0; border-radius: 3px; width: 100%; color: #fff; position: relative; z-index: 60; padding: 20px; font-weight: 400; line-height: 1.45 }
+.rd-notice-type-success { background-color: #26c7fc; -webkit-box-shadow: 0 5px 10px 0 rgba(38,199,252,.2); box-shadow: 0 5px 10px 0 rgba(38,199,252,.2) }
+.rd-notice-type-success .rd-notice-content { background-color: #26c7fc }
+.rd-notice-type-success:after { background-color: #26c7fc; -webkit-box-shadow: 0 5px 10px 0 rgba(38,199,252,.2); box-shadow: 0 5px 10px 0 rgba(38,199,252,.2) }
+.rd-notice-position-left { margin-left: -20px }
+.rd-notice-position-left:after { right: -6px; top: 50%; margin-top: -10px }
+.rd-notice-tooltip.single-line .rd-notice-content { height: 40px; padding: 0 20px; line-height: 40px; white-space: nowrap }
+        
+    </style>
+<script type="text/javascript">
+(function($) {
+	setInterval(function(){
+		if($(".animated-circles").hasClass("animated")){
+			$(".animated-circles").removeClass("animated");
+		}else{
+			$(".animated-circles").addClass('animated');
+		}
+	},3000);
+	var wait = setInterval(function(){
+		$(".livechat-hint").removeClass("show_hint").addClass("hide_hint");
+		clearInterval(wait);
+	},4500);
+	$(".livechat-girl").hover(function(){
+		clearInterval(wait);
+		$(".livechat-hint").removeClass("hide_hint").addClass("show_hint");
+	},function(){
+		$(".livechat-hint").removeClass("show_hint").addClass("hide_hint");
+	}).click(function(){
+			var oWidth = 606,
+				oHeight = 630,
+				top = ($(window).height()/2)-(oHeight/2),
+				left = ($(window).width()/2)-(oWidth/2);
+			window.location.href="{:url('zxkf')}";
+	});
+})(jQuery);
+</script>
+
+
+{include file="foot" /}
+
+
+</body>
+</html>

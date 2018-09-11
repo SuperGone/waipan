@@ -1,0 +1,134 @@
+{include file="header" /}
+<body>
+	<!-- 头部 -->
+	{include file="top" /}
+	<div class="main_box">
+		<!-- 左侧栏 -->
+		{include file="left" /}
+		<!-- 中间主体 -->
+		<div class="shouyemain">
+			<!-- 轮播 -->
+			<div class="main_banner">
+				<ul class="main_banner_list">
+					<li class="main_banner_item">
+						<a href="">
+						<img src="__HOME__/images/banner.png" alt="banner">
+						<p>将于2018年7月9日推出小米集团股 票期货合约和股票期权111</p>
+					</a>
+					</li>
+					<li class="main_banner_item">
+						<a href="">
+						<img src="__HOME__/images/test1.png" alt="banner">
+						<p>将于2018年7月9日推出小米集团股 票期货合约和股票期权222</p>
+					</a>
+					</li>
+					<li class="main_banner_item">
+						<a href="">
+						<img src="__HOME__/images/test2.png" alt="banner">
+						<p>将于2018年7月9日推出小米集团股 票期货合约和股票期权333</p>
+					</a>
+					</li>
+					<li class="main_banner_item">
+						<a href="">
+						<img src="__HOME__/images/test3.jpg" alt="banner">
+						<p>将于2018年7月9日推出小米集团股 票期货合约和股票期权444</p>
+					</a>
+					</li>
+					<li class="main_banner_item">
+						<a href="">
+						<img src="__HOME__/images/test5.jpg" alt="banner">
+						<p>将于2018年7月9日推出小米集团股 票期货合约和股票期权555</p>
+					</a>
+					</li>
+					<ul class="index" id="index">
+					</ul>
+				</ul>
+				<div class="banner_control">
+					<a href="javascript:void(0);" class="before"><</a>
+					<a href="javascript:void(0);" class="after">></a>
+				</div>
+			</div>
+			<!-- 选项列表 -->
+			<ul class="tab_list">
+				{volist name="hdplist" id="vo"}
+				<li class="tab_item">
+					<a href="/index/user/cjxw_detail?nid={$vo.nid}">
+					<img width="260" height="160" src="{$vo.ncover}">
+					<p class="tab_title">{$vo.ntitle}</p>
+				</a>
+				</li>
+				{/volist}
+			</ul>
+			<!-- 市场数据 -->
+			<div class="market">
+				<div class="market_title">
+					<i></i>
+					<span>市场数据</span>
+					<span class="more"><a href="">更多》</a></span>
+				</div>
+				<ul class="market_list">
+				{volist name="sclist" id="vo"}
+					<li>
+						<a href="/index/user/cjxw_detail?nid={$vo.nid}">
+						<i></i>
+						<p>{$vo.ntitle}</p>
+						<span class="time">{$vo.ntime|date="H:i:s",###}</span>
+					</a>
+					</li>
+					{/volist}
+				</ul>
+			</div>
+		</div>
+		<!-- 右侧栏 -->
+		<div class="right_side">
+			<!-- 单图广告 -->
+			<div class="ad_pic">
+				<a href=""><img src="__HOME__/images/ad_pic.png" alt="广告"></a>
+			</div>
+			<!-- 7X24h快讯 -->
+			<div class="h24_block">
+				<div class="ad_header">
+				<h2>7X24h快讯</h2>
+				<div class="line"></div>
+			</div>
+			<ul class="h24_list">
+			{volist name="kxlist" id="vo"}
+				<li>
+					<i></i>
+					<a href="/index/user/cjxw_detail?nid={$vo.nid}"><p>{$vo.ntitle}</p></a>
+					<span>{$vo.ntime|date="H:i:s",###}</span>		
+				</li>
+			{/volist}	
+			</ul>
+			<a href="{:url('/index/user/cjxw/token/'.$token)}"><div class="more_news">更多快讯</div></a>
+			</div>
+			
+
+			<!-- 广告列表 -->
+			<div class="ad_block">
+			<div class="ad_header">
+				<h2>官方推荐</h2>
+				<div class="line"></div>
+			</div>
+			<ul class="ad_list">
+				{volist name="tjlist" id="vo"}
+				<li>
+					<a href="/index/user/cjxw_detail?nid={$vo.nid}">
+					<img width="310" height="189" src="{$vo.ncover}" alt="" class="ad">
+					<div class="ad_title">{$vo.ntitle}</div>
+					<div class="ad_tag">广告</div>
+					</a>
+				</li>
+				{/volist}
+
+			</ul>
+			</div>
+		</div>
+	</div>
+	<!-- 页脚 -->
+	{include file="footer" /}
+
+	<!-- <script type="text/javascript" src="./js/jquery.min.js"></script> -->
+	<script type="text/javascript" src="__HOME__/js/pc.js"></script>
+</body>
+</html>

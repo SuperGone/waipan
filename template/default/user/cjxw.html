@@ -1,0 +1,69 @@
+{include file="header" /}
+<body>
+	<!-- 头部 -->
+	{include file="top" /}
+	<div class="main_box">
+		<!-- 左侧栏 -->
+		{include file="left" /}
+		<!-- 中间主体 -->
+		<div class="newsmain">
+			<ul class="news_list">
+			{volist name="tjlist" id="vo"}
+				<li class="frist">
+					<img src="{$vo.ncover}" alt="" class="news">
+					<div class="news_info">
+						<h2 class="news_title">{$vo.ntitle}</h2>
+						<div class="main_content"><?php echo mb_substr($vo['ncontent'], 0, 130, 'utf-8')?><a href="/index/user/cjxw_detail?nid={$vo.nid}"><span class="news_detail">...[详细]</span></a></div>
+					</div>
+					<div class="news_other">
+						<div class="other_part">
+							<i class="other_tag"></i>
+							<span><?php echo getfname($vo['fid']); ?></span>
+						</div>
+						<div class="other_part">
+							<i class="other_time"></i>
+							<span>{$vo.ntime|date="H:i:s",###}</span>
+						</div>
+					</div>
+				</li>
+			    {/volist}
+			</ul>
+			<div class="now_news_list">
+				<ul class="now_news1">
+				    {volist name="leftlist" id="vo"}
+					   <li><a href="/index/user/cjxw_detail?nid={$vo.nid}" class="now_news_item"><?php echo mb_substr($vo['ntitle'], 0, 15, 'utf-8')?><span>{$vo.ntime|date="H:i:s",###}</span></a></li>
+				    {/volist}	
+				</ul>
+				<ul class="now_news2">
+					{volist name="rightlist" id="vo"}
+					   <li><a href="/index/user/cjxw_detail?nid={$vo.nid}" class="now_news_item">{$vo.ntitle}<span>{$vo.ntime|date="H:i:s",###}</span></a></li>
+				    {/volist}
+				</ul>
+			</div>
+		</div>
+		<!-- 右侧栏 -->
+		<div class="right_side">
+			<div class="ad_header">
+				<h2>官方推荐</h2>
+				<div class="line"></div>
+			</div>
+			<ul class="ad_list">
+				{volist name="tjlist" id="vo"}
+				<li>
+					<a href="/index/user/cjxw_detail?nid={$vo.nid}">
+					<img width="310" height="189" src="{$vo.ncover}" alt="" class="ad">
+					<div class="ad_title">{$vo.ntitle}</div>
+					<div class="ad_tag">广告</div>
+					</a>
+				</li>
+				{/volist}
+
+				
+			</ul>
+		</div>
+	</div>
+	<!-- 页脚 -->
+	{include file="footer" /}
+
+</body>
+</html>

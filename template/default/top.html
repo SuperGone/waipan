@@ -1,0 +1,16 @@
+<div class="header">
+		<div class="header_inner">
+			<div class="brand">
+				<a href="/"><img alt="logo1" class="logo1" src="{$conf['pcweb_logo']}"></a>
+				<a href="/"><img alt="logo2" class="logo2" src="{$conf['pcweb_logo2']}"></a>
+			</div>
+         
+			<div class="user">
+				<div class="user_info">
+					<div class="account">￥ {$userinfo.usermoney}</div>
+					<div class="user_name">{$userinfo.username}</div>
+				</div>
+				<img src="<?php if($userinfo['portrait']){echo '/public/'.$userinfo['portrait'];}else{echo '__HOME__/images/userlogo.jpg';} ?>" alt="user_icon" class="user_icon">
+			</div>
+		</div>
+	</div>

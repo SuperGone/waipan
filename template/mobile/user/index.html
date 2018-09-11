@@ -1,0 +1,145 @@
+{include file="header" /}
+
+<script>
+var pay_type = '';
+var wxpay_info = '';
+var returnrul = "{:url('user/index')}";
+</script>
+<body>
+    <div class="ubody">
+        <div class="uhead">
+            <div class="sptext">个人中心</div>
+            <div class="uh_logo">
+                <div class="userimg"><img src="<?php if($userinfo['portrait']){echo '/public/'.$userinfo['portrait'];}else{echo '/public/uploads/userlogo.jpg';} ?>" /></div>
+                <div class="user_juzhong">{$userinfo.nickname?$userinfo.nickname:$userinfo.username}{if $userinfo.otype == 101} (代理商 邀请码：{$userinfo.uid}) {/if}</div>
+                <div class="user_juzhong jj2">
+                    <span class="fll">ID:{$userinfo.uid}</span>
+                    <span class="fll">&nbsp;周周利:{$zhouli_wallet.money}</span>
+                    <span class="frl"><span class="fr">{$userinfo.usermoney}{if $userinfo.otype == 101} (保证金：{$userinfo.minprice?$userinfo.minprice:'0'}) {/if}</span><i class="jinbi"></i></span>
+
+                </div>
+
+            </div>
+
+        </div>
+        <div class="daohang">
+            <ul class="info_head">
+                <a href="{:url('userpay')}">
+                    <li>
+                        <img src="__HOME__/images/chongzhi.png">
+                        <span class="title">在线充值</span>
+                    </li>
+                </a>
+                <a href="javascript:void(0)" onclick="txgourl()">
+                    <li class="">
+                        <img src="__HOME__/images/tixian.png">
+                        <span class="title">提现</span>
+                    </li>
+                </a>
+                <div style="clear:both;"></div> 
+            </ul>
+            <ul class="zhoulicss">
+                <a href="javascript:void(0)" onclick="checkzhouli()">
+                    <li class="">
+                        <img src="__HOME__/images/tixian.png">
+                        <span class="title">周周利</span>
+                        <span class="news">昨日收益：{$zhouli_wallet.yesterday}</span>
+                    </li>
+                </a>
+                 <div style="clear:both;"></div> 
+            </ul>
+        </div>
+        <div class="fjx"></div>
+        <div class="daohang2">
+            <ul>
+                
+                <a href="{:url('cashlist')}">
+                    <li class="borderb borderr">
+                        <img src="__HOME__/images/txjl.png">
+                        <span class="title">提现记录</span>
+                        
+                    </li>
+                </a>
+                <a href="{:url('order/hold')}">
+                    <li class="borderb borderr">
+                        <img src="__HOME__/images/lsdd.png">
+                        <span class="title">历史订单</span>
+                        
+                    </li>
+                </a>
+                <a href="{:url('ercode')}" >
+                    <li class="borderb">
+                        <img src="__HOME__/images/tgfy.png">
+                        <span class="title">推广注册</span>
+                       
+                    </li>
+                </a>
+                <a href="{:url('editinfo')}">
+                    <li class="borderr">
+                        <img src="__HOME__/images/xgxx.png">
+                        <span class="title">修改信息</span>
+                       
+                    </li>
+                </a>
+                <a href="http://app1.xinyang2018.com/app.php/1">
+                    <li class="">
+                        <img src="__HOME__/images/xiazai.png">
+                        <span class="title">APP下载</span>
+                       
+                    </li>
+                </a>
+                <a href="{:url('workorder')}">
+                    <li class="">
+                        <img src="__HOME__/images/kefu.png">
+                        <span class="title">客服/工单</span>
+                      
+                    </li>
+                </a>
+                 <div style="clear:both;"></div> 
+            </ul>
+        </div>
+        <div>
+        <a href="javascript:;" class="userlogout" onclick="app_exit()">
+           <span class="title">退出</span>
+        </a>
+            </div>
+        <div class="fjx"></div>
+        <br/><br/><br/><br/><br/>
+    </div>
+    
+    
+
+
+{include file="foot_huiyuan" /}
+<script>
+    function txgourl(){
+        var is_smrz="{$userinfo.is_smrz}";
+        var successurl="{:url('outmoney')}";
+        if(is_smrz==2){
+            location.href=successurl;
+        }else if(is_smrz==0){
+            layer.msg("您还未提交实名认证，不可以提现！");
+        }else if(is_smrz==1){
+            layer.msg("实名认证审核中，请等待通过后再提现！");
+        }else{
+            layer.msg("实名认证未通过，请修改认证后再提现！");
+        }
+    }
+    
+        
+    function checkzhouli(){
+        var is_zhouli="{$is_zl_wallet}";
+        if(is_zhouli==1){
+            location.href="{:url('index/zhouli/zhouli')}";
+        }else{
+            layer.confirm("没有开通周周利，是否开通？", {btn: ['确定', '取消'], title: "提示"}, function () { 
+                    location.href="{:url('index/zhouli/creat')}";
+                }); 
+        }
+    }
+    
+
+</script>
+
+</body>
+</html>

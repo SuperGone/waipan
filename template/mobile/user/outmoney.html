@@ -1,0 +1,325 @@
+{include file="header" /}
+<link rel="stylesheet" type="text/css" href="__HOME__/css/selectFilter.css">
+
+<body>
+<div class="logibody">
+	<div class="codehead">
+        <a href="javascript:history.go(-1);"><img class="fl" src="__HOME__/images/back.png"></a>
+        <span>提现</span>
+    </div>
+    <div class="main cash">
+    	<ul class="card_list">
+            {if !isset($mybank)}
+                <li class="add" onclick="go_bank()">
+                    <i class="zfb tj"></i>
+                    <div class="detail">
+                        <div class="name">添加银行卡</div>
+                    </div> 
+                </li>
+            {else}
+                <li class="card" onclick="go_bank()">
+                    <i class="wx yh"></i>
+                    <div class="detail">
+                        <div class="name">{$mybank.bank_nm}</div>
+                        <div class="info">**** **** **** {$sub_bankno}</div>
+                    </div>
+                </li>
+                <article>
+                    <ul class="card_detail txbg">
+                        <li>
+                            <span class="card_item">提现金额：</span>
+                            <input type="number" placeholder="请输入出金金额" ng-model="outAmount.outamount"  class="cash-price card_input ng-pristine ng-untouched ng-valid ng-not-empty ng-valid-required">
+                        </li>
+                    </ul>
+                    <span>
+                        <i class="iconfont icon--4"></i>
+                        
+                    </span>
+                    
+                </article>
+                
+                <footer class="fttx">
+                    <div style="margin-bottom: 0.09rem;">单次提现金额至少￥<span class="cash_min rise" attrmax="{$conf.cash_max}">{$conf.cash_min}</span></div>
+                    余额：<span class="ng-binding rise">{$userinfo.usermoney}</span>
+                    手续费：<span  class="ng-binding reg_par fall" attrdata="{$conf.reg_par}">{$conf.reg_par}%</span>
+                    实际到账：<span  class="ng-binding true_price rise" style="display:none"></span>
+                </footer>
+                <button class="newbutton outmoneybtn submit"  onclick="out_withdraw()">确定提现</button>
+            {/if}
+        </ul>
+
+    </div>
+</div>
+
+<div class="modal-bank ng-hide" >
+    <div class="message_box">
+        <!-- 顶部通栏 -->
+    <div class="ktop">
+        <div class="ktopbody top_i_box">
+            <span>银行资料</span>
+            <i class="message_box_top" onclick="hide_bank()"></i>
+        </div>      
+    </div>
+
+    <!-- 主体 -->
+    <div class="main">
+        <form method="post">
+        <ul class="card_detail">
+        <li>
+          <span class="card_item">银行名称</span>
+          <div class="filter-box1">
+            <div class="filter-text">
+              <input class="filter-title" type="text" readonly="" name="" placeholder="请选择银行名称"></div>
+                <select name="bankno" id="bankno" class="bankno" style="display: none;">
+                  {volist name="banks" id="vo"}
+
+                    <option label="{$vo.bank_nm}" value="{$vo.id}" {if isset($mybank) && $mybank['bankno'] == $vo['id']} selected="selected" {/if} >{$vo.bank_nm}</option>
+
+                    {/volist}
+              </select>
+          </div>
+          <i class="icon icon-filter-arrow"></i>
+        </li>
+        <li>
+          <span class="card_item">省份</span>
+          <div class="filter-box2">
+            <div class="filter-text">
+              <input class="filter-title" type="text" readonly="" name="" placeholder="请选择省份"></div>
+                <select id="province" class="province" name="province" style="display: none;">
+                    <option value="">请选择</option>
+                    {volist name="province" id="vo"}
+
+                    <option  value="{$vo.id}" {if isset($mybank) && $mybank['provinceid'] == $vo['id']} selected="selected" {/if} >{$vo.name}</option>
+
+                    {/volist}
+
+                </select>
+          </div>
+          <i class="icon icon-filter-arrow"></i>
+        </li>
+        <li>
+          <span class="card_item">市名</span>
+          <div class="filter-box3">
+            <div class="filter-text">
+              <input class="filter-title" type="text" readonly="" name="" placeholder="请选择市名"></div>
+                <select id="city" name="cityno" class="city" style="display: none;">
+                    {if isset($mybank)}
+                    <option value="{$mybank.cityno}" selected>{:getarea($mybank['cityno'])}</option>
+                    {else/}
+                    <option value="">请选择</option>
+                    {/if}
+                </select>
+          </div>
+          <i class="icon icon-filter-arrow"></i>
+        </li>
+        <li>
+          <span class="card_item">开户支行</span>
+          <input class="card_input address" type="text" name="address" placeholder="请输入支行名称" value="{:isset($mybank)?$mybank.address:''}"></li>
+        <li>
+          <span class="card_item">开户名</span>
+          <input class="card_input accntnm" type="text" name="accntnm" value="{$userinfo.realname}" disabled=""></li>
+        <li>
+          <span class="card_item">卡号</span>
+          <input class="card_input accntno" type="text" name="accntno" placeholder="请输入卡号" value="{:isset($mybank)?$mybank.accntno:''}"></li>
+          {if isset($mybank)}
+            <input type="hidden" class="id" name="id" value="{$mybank['id']}">
+           {/if}
+        <li>
+          <span class="card_item">身份证号</span>
+          <input class="card_input scard" type="text" name="scard" value="{$userinfo.id_number}" placeholder="请输入身份证号" disabled=""></li>
+        <li>
+          <span class="card_item">预留手机号</span>
+          <input class="card_input phone" type="text" value="{:isset($mybank)?$mybank.phone:''}" name="phone" placeholder="请输入手机号"></li>
+      </ul>
+      <input class="submit" type="button" onclick="update_user()" value="确定">
+      </form>
+
+
+    </div>
+    </div>
+
+</div>
+<script type="text/javascript" src="__HOME__/js/selectFilter.js"></script>
+    <script type="text/javascript">//本小插件支持移动端哦
+      //这里是初始化
+      $('.filter-box3').selectFilter();
+      $('.filter-box2').selectFilter({
+            callBack : function (val){
+                 $("#province").val(val);
+                 var pid = val;
+                if(pid != ''){
+                    var url = "{:url('getarea')}"+"?id="+pid;
+                    $.ajaxSettings.async = false;
+                    $.get(url,function(data){
+                      $("#city").html(data);
+                    });
+                    $.ajaxSettings.async = true;
+                }else{
+                    $("#city").html('<option value="">请选择城市</option>');
+                }
+                var selectList = $('.filter-box3').find('select option');
+                $('.filter-box3').unbind();
+                $('.filter-box3').find('.filter-list').remove();
+
+                $('.filter-box3').selectFilter({
+                    callBack : function (val){
+                        $("#city").val(val);
+                    }
+                });
+                console.log(selectList);
+            }
+      });
+      $('.filter-box1').selectFilter({
+        callBack : function (val){
+            $("#bankno").val(val);
+        }
+      });
+      // $('.filter-title').val('');
+      // $(".card_detail li").click(function() {
+      //   if ($(this).index() <= 2) {
+      //     $(this).find('.icon-filter-arrow').toggleClass('filter-show');
+      //   }
+      // });
+  </script>
+
+<script>
+    $('#province').change(function(){
+        var pid = $(this).val();
+        if(pid != ''){
+            var url = "{:url('getarea')}"+"?id="+pid;
+            $.get(url,function(data){
+              $("#city").html(data);
+            });
+        }else{
+            $("#city").html('<option value="">请选择城市</option>');
+        }
+
+        
+      });
+    function go_bank() {
+      $('.modal-bank').removeClass("ng-hide");
+    }
+    function hide_bank() {
+      $('.modal-bank').addClass("ng-hide");
+    }
+
+    function sb(form){
+        var realname = form.realname.value;
+        var id_number = form.id_number.value;
+        var sfz_zm = form.sfz_zm.value;
+         if (!realname) {
+            layer.msg('请输入真实姓名'); 
+            return false;
+          }
+        var regName =/^[\u4e00-\u9fa5]{2,4}$/;  
+        if(!regName.test(realname)){  
+            layer.msg('真实姓名填写有误');  
+            return false;  
+        } 
+          if (!id_number) {
+            layer.msg('请输入身份证号码'); 
+            return false;
+          }
+        var regIdNo = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;  
+        if(!regIdNo.test(id_number)){  
+            layer.msg('身份证号填写有误');  
+            return false;  
+        } 
+          if (!sfz_zm) {
+            layer.msg('请上传身份证照片'); 
+            return false;
+          }
+    	var data = $('#form1').serialize();
+		  var formurl = "{:Url('mobile/user/autonym')}";
+		  var locurl = "{:Url('mobile/user/index')}";
+
+		  WPpost(formurl,data,locurl);
+		  return false;
+    }
+
+
+    function update_user() {
+    
+        var bankno = $('.bankno').val();
+        var province = $('.province').val();
+        var city = $('.city').val();
+        var address = $('.address').val();
+        var accntnm = $('.accntnm').val();
+        var accntno = $('.accntno').val();
+        var scard = $('.scard').val();
+        var phone = $('.phone').val();
+        var id = $('.id').val();
+
+
+        if(!bankno){layer.msg('请选择银行');return false;}
+        if(!province){layer.msg('请选择省份');return false;}
+        if(!city){layer.msg('请选择城市');return false;}
+        if(!address){layer.msg('请输入支行地址');return false;}
+        if(!accntnm){layer.msg('请输入开户名称');return false;}
+        if(!accntno){layer.msg('请输入卡号');return false;}
+        if(!scard){layer.msg('请输入身份证号码');return false;}
+        if(!phone){layer.msg('请输入手机号');return false;}
+
+
+        var postdata = 'bankno='+bankno+"&provinceid="+province+"&cityno="+city+"&address="+address+"&accntnm="+accntnm+"&accntno="+accntno+"&scard="+scard+"&phone="+phone;
+        if(id){
+            postdata += "&id="+id
+        }
+        var posturl = "/mobile/user/dobanks";
+        $.post(posturl,postdata,function(resdata){
+            layer.msg(resdata.data);
+
+            if(resdata.type == 1){
+                setTimeout('gourl()',1000);
+            }
+
+        })
+
+        
+    }
+    function gourl() {
+    
+        location.href='/mobile/user/outmoney';
+    }
+
+    $('.cash input').bind('input propertychange', function() {
+        var price = $('.cash-price').val();
+        var reg_par = $('.reg_par').attr('attrdata');
+        var true_price = (price*(100-reg_par)/100).toFixed(2);
+        $('.true_price').html(true_price);
+        $('.true_price').show();
+
+    });
+
+    function out_withdraw() {
+    
+        var price = $('.cash-price').val();
+        var cash_min = $('.cash_min').html();
+        var cash_max = $('.cash_min').attr('attrmax');
+        if(price*10 < cash_min*10){
+            layer.msg('最低提现金额为'+cash_min);
+            return false;
+        }
+
+        if(price*10 > cash_max*10){
+            layer.msg('最高提现金额为'+cash_max);
+            return false;
+        }
+
+        var postdata = 'price='+price;
+        var posturl = '/mobile/user/cash';
+        $.post(posturl,postdata,function(resdata){
+
+            layer.msg(resdata.data);
+            if(resdata.type == 1){
+                setTimeout('gourl()',1000);
+            }
+
+        })
+
+
+    }
+</script>
+{include file="foot" /}
+</body>
+</html>

@@ -1,0 +1,257 @@
+{include file="header" /}
+<body class="me">
+<div class="code_body">
+    <div class="codehead">
+        <a href="javascript:history.go(-1);"><img class="fl" src="__HOME__/images/back.png"></a>
+        <span>周周利</span>
+    </div>
+    
+    <div class="zhouli_content">
+        <div class="zhouliinfo">
+            <span class="zrsy_title">昨日收益（元）</span>
+            <span class="zrsy_money">{$wallet.yesterday}</span>
+            <span>周周利钱包总金额 <b>{$wallet.money}</b> 元</span>
+        </div>
+        <ul class="zhouliul">
+            <li><span>当日利率(‰)</span><span class="ulmoney">{$dayll}</span></li>
+             <li><span>累计收益（元）</span><span class="ulmoney">{$wallet.accumulation}</span></li>
+            <a  class="" onclick='fymx_view()'><li><span>七日收益（元）</span><span class="ulmoney">{$sevencount}</span></li></a>
+            <li><span>总资产（元）</span><span class="ulmoney">{$wallet.money+$userinfo.usermoney}</span></li>
+            <div style="clear:both;"></div> 
+        </ul>
+        
+        <div class="zhoulitu">
+              <div id="main" style="width: 100%;height:200px;"></div>
+        </div>  
+        
+        <div class="zhouli_log">
+            <div class="zhoulitype">
+                    <ul class="">
+                        <li class="">
+                            <a class="" style="color:#096cc3;" id='page_start' onclick="log_type(this);" typevalue="2">转入</a></li>
+                        <li class="">
+                            <a class="" style="color:#096cc3;" onclick="log_type(this);" typevalue="-1">转出</a></li>
+                        <li class="">
+                            <a class="" style="color:red;" onclick="log_type(this);" typevalue="0">收益</a></li>
+                         <div style="clear:both;"></div> 
+                    </ul>
+                </div>
+            <div class="">
+                    <form method="post" class="zhoulisearch" action="" autocomplete="off" class="" onsubmit="return false;">
+                        <input class="" name="startDate" value="" id="startdate"  type="date">
+                        <span> - </span>
+                        <input class="" id="enddate" name="endDate" type="date">
+                        <button class="" value=""  onclick="log_view()" smartracker="on" type="submit">搜索</button>
+                    </form>
+
+                </div>
+            
+            <table class="zhoulitable">
+                    <thead>
+                        <tr>
+                            <th class="billTime">日期</th>
+                            <th class="billAmount">金额(元)</th>
+                            <th>信息</th>
+                        </tr>
+                    </thead>
+                    <tbody id="log_data">
+                      
+                    </tbody>
+                </table>
+        </div>
+    </div>
+ </div>
+    <br/> <br/> <br/> <br/> <br/>
+    <div class="zhouli_footer">
+         <a class="baidi" onclick='zhuan_wallet("1")' title="转入">转&nbsp;入</a>
+         <a class="landi" onclick='zhuan_wallet("2")' title="转出">转&nbsp;出</a>
+    </div>
+    
+            <script>
+                var starttime = "";
+                var endtime = "";
+                var type = "";
+                var page = 1;
+                function fymx_view(){
+                    layer.open({
+                        type: 2,
+                        title: '累计分佣收益',
+                        shadeClose: true,
+                        shade: 0.8,
+                        area: ['400px', '90%'],
+                        content: "{:url('zhouli/fymx')}" //iframe的url
+                      }); 
+                }
+                function log_view(obj)
+                {
+                    page = $(obj).attr('data-page');
+                    if (!page) {
+                        page = 1;
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "{:url('zhouli/get_log_ajax')}",
+                        data: {
+                            'starttime': starttime,
+                            'endtime': endtime,
+                            'type': type,
+                            'page': page
+                        },
+                        dataType: "json",
+                        success: function (e) {
+                            if (e.state == "200") {
+                                var html = "";
+                                var data = e.data;
+                                for (var j = 0, len = data.length; j < len; j++) {
+                                    html += '<tr><td class="billTime">' + formatDateTime(data[j]['time']) + '</td><td class="billAmount">' + data[j]['money'] + '</td><td class="billInfo"><span class="emoji-li" style="visibility: visible;">'+changetype(data[j]['type'])+'</span></td></tr>';
+                                }
+                                var page='<tr><td id="page-main" colspan="4"><div data-widget-cid="widget-11"><div class="ui-paging"><span class="ui-paging-prev ui-paging-disabled" onclick="log_view(this)" data-page="'+(parseInt(e.nowpage)-1)+'">上一页</span><a class="ui-paging-item ui-paging-current ui-paging-disabled" data-page="'+parseInt(e.nowpage)+'">'+parseInt(e.nowpage)+'</a><span class="ui-paging-next ui-paging-disabled"  onclick="log_view(this)" data-page="'+(parseInt(e.nowpage)+1)+'">下一页</span><span class="ui-paging-info"><span id="log_page" class="ui-paging-bold">'+(parseInt(e.nowpage))+'/'+(parseInt(e.page))+'</span>页</span></div></div></td></tr>';
+                                $('#log_data').html(html+page);
+                            }
+
+                        }});
+                }
+                function changetype(obj)
+                {
+                    switch (obj)
+                    {
+                        case '-1':
+                            return "转出";
+                            break;
+                        case '1':
+                            return "转入";
+                            break;
+                        case '0':
+                            return "收益";
+                            break;
+                        case '2':
+                            return "佣金转入";
+                            break;
+                        default:
+                            return "未知";
+                    }
+                }
+                function log_type(obj)
+                {
+                    type = $(obj).attr('typevalue');
+                    $('#triggers').find("li").removeClass('i-asset-tab-item-current');
+                    $(obj).parent().addClass('i-asset-tab-item-current');
+                    $.ajax({
+                        type: "POST",
+                        url: "{:url('zhouli/get_log_ajax')}",
+                        data: {
+                            'starttime': starttime,
+                            'endtime': endtime,
+                            'type': type,
+                            'page': page
+                        },
+                        dataType: "json",
+                        success: function (e) {
+                                        if (e.state == "200") {
+                                var html = "";
+                                var data = e.data;
+                                for (var j = 0, len = data.length; j < len; j++) {
+                                    html += '<tr><td class="billTime">' + formatDateTime(data[j]['time']) + '</td><td class="billAmount">' + data[j]['money'] + '</td><td class="billInfo"><span class="emoji-li" style="visibility: visible;">'+changetype(data[j]['type'])+'</span></td></tr>';
+                                }
+                                var page='<tr><td id="page-main" colspan="4"><div data-widget-cid="widget-11"><div class="ui-paging"><span class="ui-paging-prev ui-paging-disabled" onclick="log_view(this)" data-page="'+(parseInt(e.nowpage)-1)+'">上一页</span><a class="ui-paging-item ui-paging-current ui-paging-disabled" data-page="'+parseInt(e.nowpage)+'">'+parseInt(e.nowpage)+'</a><span class="ui-paging-next ui-paging-disabled"  onclick="log_view(this)" data-page="'+(parseInt(e.nowpage)+1)+'">下一页</span><span class="ui-paging-info"><span id="log_page" class="ui-paging-bold">'+(parseInt(e.nowpage))+'/'+(parseInt(e.page))+'</span>页</span></div></div></td></tr>';
+                                $('#log_data').html(html+page);
+                            }
+                        }});
+                }
+                
+                function zhuan_wallet(type)
+                {
+                    //type=1 转入/2 转出
+                    if(type=="1"){var tt="转入";}else{tt="转出";}
+                    layer.prompt({title: '请输入登陆密码，并确认', formType: 1}, function(paypass, index){
+                      layer.close(index);
+                      layer.prompt({title: '请'+tt+'转出金额，并确认', formType: 0}, function(money, index){
+                        layer.close(index);
+                         $.ajax({
+                        type: "POST",
+                        url: "{:url('zhouli/account_wallet')}",
+                        data: {
+                            'paypass': paypass,
+                            'money': money,
+                            'type': type,
+                        },
+                        dataType: "json",
+                        success: function (e) {
+                            layer.msg(e.msg);
+                            if(e.state=="200"){
+                                location.reload();
+                            }
+                        }
+                         })
+                      });
+                    });
+                }
+                
+            </script>
+        <script src="/static/layer/laydate.js"></script>
+        <script>
+                laydate.render({
+                    elem: '#startdate',
+                    done: function (value, date) { //监听日期被切换
+                        starttime = value;
+                    }
+                });
+                laydate.render({
+                    elem: '#enddate',
+                    done: function (value, date) { //监听日期被切换
+                        endtime = value;
+                    }
+                });
+        </script>
+        <script src="__HOME__/js/echarts.min.js"></script>
+        <script type="text/javascript">
+                // 基于准备好的dom，初始化echarts实例
+                var myChart = echarts.init(document.getElementById('main'));
+
+                // 指定图表的配置项和数据
+                var option = {
+                    title: {
+                        text: '利率曲线'
+                    },
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: JSON.parse('{$lilvline_date}')
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [
+                        {
+                            name: '利率',
+                            type: 'line',
+                            smooth: true,
+                            stack: '总量',
+                            data: JSON.parse('{$lilvline_value}')
+                        }
+                    ]
+                };
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option);
+        </script>
+        <script>
+            $('#page_start').click();
+        </script>
+    </div>
+</body>
+
+</html>

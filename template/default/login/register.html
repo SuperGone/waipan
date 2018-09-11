@@ -1,0 +1,147 @@
+{include file="header" /}
+<body>
+  <!-- 头部 -->
+  <div class="header">
+    <div class="header_inner login">
+      <div class="brand">
+        <a href="/"><img alt="logo1" class="logo1" src="__HOME__/images/logo1.png"></a>
+        <a href="/"><img alt="logo2" class="logo2" src="__HOME__/images/logo2.png"></a>
+      </div>
+      <ul id="lang" class="jsSelect">
+        <i class="icon icon-filter-arrow"></i>
+        <li><a href="#" class="s"><i class="en"></i>中文</a></li>
+        <li><a href="#"> <i class="zh-cn"></i>English</a></li>
+        <li><a href="#"><i class="other"></i>其他</a></li> 
+      </ul> 
+    </div>
+  </div>
+  <!-- 背景 -->
+  <div class="register_box">
+  <!-- 登录表单 -->
+  <div class="login_box register">
+    <form class="login register" method="post" id="formid">
+      <div class="from_title">注册账号</div>
+      <div class="input_box">
+        <div class="form_part">
+         <div class="text">姓名</div>
+            <input type="text" class="username nickname" name="nickname" placeholder="请输入您的姓名">
+             <div class="text">手机号</div>
+            <input type="text" class="username phone" name="username" placeholder="请输入您的手机号">
+            <span class="send_yzm code_btn" onclick ="return get_svg();">发送</span>
+            <div class="text">验证码</div>
+            <input type="text" class="username" name="phonecode" placeholder="请输入您的验证码">
+      </div>
+         <div class="form_part no_mr">
+         <div class="text">密码</div>
+            <input type="password" class="password" name="upwd"  placeholder="请输入您的密码">
+             <div class="text">确认密码</div>
+            <input type="password" class="password"  name="upwd2" placeholder="请确认您的密码">
+            <div class="text">推荐码</div>
+            <input type="text"  {if $oid} value="{$oid}" readonly="readonly" {/if} name="oid" placeholder="请输入推荐码">
+      </div>
+      </div>
+        <div style="width: 100%;margin: 0 auto;">
+         <button type="button" class="submit register" style="    margin-left: 224px;" onclick="return checkform(this.form);">注册</button>
+         </div>
+          <div class="login_now">
+            <div class="register"><a href="{:url('login/login')}">已有账号？立即登陆</a></div>
+        </div>
+      </form>
+      <div class="form_text">双重安全保障机制3</div>
+  </div>
+</div>
+    
+  <!-- 页脚 -->
+  {include file="footer" /}
+  <script type="text/javascript" src="__HOME__/js/pc.js"></script>
+</body>
+<script>
+function checkform(form){
+  var username = form.username.value;
+  var upwd = form.upwd.value;
+  var upwd2 = form.upwd2.value;
+  var oid = form.oid.value;
+  if(!username){
+    layer.msg('请输入手机号');
+    return false; 
+  }
+
+  if (!upwd) {
+    layer.msg('请输入登录密码'); 
+    return false;
+  }
+
+  if (!upwd2) {
+    layer.msg('请再次输入登录密码'); 
+    return false;
+  }
+
+  if(upwd.length < 6 || upwd2.length < 6){
+    layer.msg('密码长度大于6位'); 
+    return false;
+  }
+
+  if(upwd != upwd2){
+    layer.msg('两次输入密码不同'); 
+    return false;
+  }
+
+  if(!oid){
+    layer.msg('请输入邀请码');
+    return false; 
+  }
+
+
+  var data = $('#formid').serialize();
+    var formurl = "{:Url('login/register')}";
+    var locurl = "{:Url('index/index')}";
+
+    WPpost(formurl,data,locurl);
+    return false;
+}
+
+
+/**
+ * 发送验证码
+ * @return {[type]} [description]
+ */
+function get_svg() {
+  
+  
+  var phone = $('.phone').val();
+
+  if(!(/^1[34578]\d{9}$/.test(phone))){
+        layer.msg("请正确输入手机号！");
+        return false;
+    }
+
+  
+  var url = "/index/login/sendmsm/phone/"+phone+"/moban/43";
+  $.get(url,function(resdata){
+    layer.msg(resdata.data);
+    if(resdata.type == 1){
+      $(".code_btn").attr('onclick',"return false;");
+      listion_sendmsm();
+    }
+  })
+  return false;
+}
+
+function listion_sendmsm(){
+
+   var time= 61;
+    setTime=setInterval(function(){
+        if(time<=1){
+            clearInterval(setTime);
+            $(".code_btn").text("再发一次");
+            $(".code_btn").attr('onclick',"return get_svg();");
+            return;
+        }
+        time--;
+        $(".code_btn").text(time+"s");
+
+    },1000);
+}
+
+</script>
+</html>

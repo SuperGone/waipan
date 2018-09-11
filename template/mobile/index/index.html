@@ -1,0 +1,100 @@
+{include file="header" /}
+<body>
+  <div class="jy_body">
+  	<div class="jy_head">
+  		<div class="jylogo_l"><img src="__HOME__/images/userlogo.jpg"></div>
+      <div class="jylogo_r">
+        <span>￥{$userinfo.usermoney}</span>
+        <span>{$userinfo.username}</span>
+      </div>
+      <a href="javascript:;" onclick="app_exit()"><img class="hdtc" src="__HOME__/images/tuichu.png"></a>
+  	</div>
+    <div class="tonggao" style="width:100%;"><marquee><font size="+2" color="red" id="tonggao">{$conf.mobile_gonggao}</font></marquee></div>
+    <div class="jy-header">
+        <ul>
+            <li>商品名称</li>
+            <li>现价</li>
+            <li>最低</li>
+            <li>最高</li>
+        </ul>
+    </div>
+    <div class="jy-body" style="transform: translate3d(0px, 0px, 0px) scale(1);">
+    	{volist name="pro" id="vo"}
+        <ul onclick="parent.location='{:url('goods/goods',array('pid'=>$vo['pid'],'token'=>$token))}';"  id="pid{$vo.pid}">
+            <li>
+                <a href="javascript:;" class="ng-binding prtitle">{$vo.ptitle}</a>
+            </li>
+            <li>
+            	<span class="xiulogo" style="display: none;">休</span>
+                <a  href="javascript:;" class="ng-binding rise-value now-value">{$vo.Price}</a>
+            </li>
+            <li>
+                <a href="javascript:;" class="ng-binding rise rise-low">{$vo.Low}</a>
+            </li>
+            <li>
+                <a href="javascript:;" class="ng-binding rise rise-high">{$vo.High}</a>
+            </li>
+        </ul>
+         {/volist} 
+    </div>
+    <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/> <br/>
+  	</div>
+  	
+  <div class="order-p" id="J_order" style="display:none;">
+		<div class="order-item">
+			<i class="iconfont icon--5 icon-qian" style="color:#ecb540"></i> <span class="order-phone"></span> &nbsp;<span class="order-rs" style="color:#f77168"></span>
+		</div>
+	</div>
+
+
+{include file="foot_jycp" /} 
+</body>
+<script>
+	var order_list;
+	var order_index = 0;
+	var max_rand = 50;
+	function order_show(){
+		if(order_list != null && $("#J_order").is(":hidden")){
+			if(order_index>=max_rand){
+				order_index = 0;
+			}
+			$("#J_order").find(".order-phone").html(order_list[order_index]['phone']);
+			$("#J_order").find(".order-rs").html('赢利+'+order_list[order_index]['price']+'元');
+			$("#J_order").show();
+			window.setTimeout(function(){
+				$("#J_order").hide();
+			},1500);
+			order_index++;
+		}
+	}
+	function order_start(){
+		var rand = Math.ceil(Math.random()*100);
+		if(rand>=80){
+			if(order_list!=null){
+				order_show();
+			}
+		}
+	}
+	$(document).ready(function(){
+		$.ajax({
+			type: "GET",
+			contentType: "application/json;charset=utf-8",
+			url: "/index/api/ajax_order",
+			data: null,
+			dataType: "json",
+			complete: function () { },
+			success: function (result) {
+				order_list = result;
+			},
+			error: function (result, status) { }
+		});
+		/*
+		$.get("/index/index/ajax_order",null,function(data){
+			order_list = data;
+		});
+		*/
+		window.setInterval(order_start,1000);
+	});
+</script>
+</html>
+<script src="__HOME__/js/lk/index.js">ajaxpro()</script>

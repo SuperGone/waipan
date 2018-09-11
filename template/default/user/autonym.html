@@ -1,0 +1,121 @@
+{include file="header" /}
+
+<body class="me">
+    <!-- 头部 -->
+    {include file="top" /}
+    <div class="main_box">
+        <!-- 左侧栏 -->
+        {include file="userleft" /}
+        <!-- 中间主体 -->            
+    <div class="usermain">
+        <div class="reset">
+    	<form method="post" id="form1" action="/index/user/editinfo">
+    		
+	      	<ul class="card_detail">
+
+		        <li>
+		          <span class="card_item">真实姓名</span>
+		          <input class="reset_input" type="text" name="realname" placeholder="认证后无法修改"></li>
+		        <li>
+		          <span class="card_item">身份证号</span>
+		          <input class="reset_input" type="text" name="id_number" placeholder="输入您的身份证号"></li>
+		        
+		    </ul>
+            <!--<div class="xgtx">
+              <span class="card_item">身份证正面</span>
+              <span id="result"><img src="/public/uploads/upload.png" onclick="f.click()" height="100" width="200"></span>
+              <input type="file" id="f" name="f" onchange="sc(this);" style="display:none"/>
+              <div id="show"><input value="" name="sfz_zm" style="display:none;"></div>
+            </div>    -->    
+	      <input class="submit" type="button" onclick="sb(this.form);" value="提交认证">
+	      </form>
+    </div>
+    </div>
+
+
+
+</div>
+<script>
+function sc(){
+    var animateimg = $("#f").val(); //获取上传的图片名 带//
+    var imgarr=animateimg.split('\\'); //分割
+    var myimg=imgarr[imgarr.length-1]; //去掉 // 获取图片名
+    var houzui = myimg.lastIndexOf('.'); //获取 . 出现的位置
+    var ext = myimg.substring(houzui, myimg.length).toUpperCase();  //切割 . 获取文件后缀
+    
+    var file = $('#f').get(0).files[0]; //获取上传的文件
+    var fileSize = file.size;           //获取上传的文件大小
+    var maxSize = 1048576;              //最大1MB
+    if(ext !='.PNG' && ext !='.GIF' && ext !='.JPG' && ext !='.JPEG' && ext !='.BMP'){
+        parent.layer.msg('文件类型错误,请上传图片类型');
+        return false;
+    }else if(parseInt(fileSize) >= parseInt(maxSize)){
+        parent.layer.msg('上传的文件不能超过1MB');
+        return false;
+    }else{  
+        var data = new FormData($('#form1')[0]); 
+        $.ajax({  
+            url: "/index/user/uploadimg", 
+            type: 'POST',  
+            data: data,  
+            dataType: 'JSON',  
+            cache: false,  
+            processData: false,  
+            contentType: false  
+        }).done(function(ret){  
+            if(ret['isSuccess']){
+                var result = '';
+                var result1 = '';
+                // $("#show").attr('value',+ ret['f'] +);
+                result += '<img src="' + '/public/' + ret['f']  + '"  onclick="f.click()" height="100" width="100">';
+                result1 += '<input value="' + ret['f']  + '" name="sfz_zm" style="display:none;">';
+                $('#result').html(result);
+                $('#show').html(result1);
+                layer.msg('上传成功');
+            }else{  
+                layer.msg('上传失败');
+            }  
+        });  
+        return false;
+       }  
+    }
+
+
+
+    function sb(form){
+        var realname = form.realname.value;
+        var id_number = form.id_number.value;
+       // var sfz_zm = form.sfz_zm.value;
+         if (!realname) {
+            layer.msg('请输入真实姓名'); 
+            return false;
+          }
+        var regName =/^[\u4e00-\u9fa5]{2,4}$/;  
+        if(!regName.test(realname)){  
+            layer.msg('真实姓名填写有误');  
+            return false;  
+        } 
+          if (!id_number) {
+            layer.msg('请输入身份证号码'); 
+            return false;
+          }
+        var regIdNo = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;  
+        if(!regIdNo.test(id_number)){  
+            layer.msg('身份证号填写有误');  
+            return false;  
+        } 
+         /* if (!sfz_zm) {
+            layer.msg('请上传身份证照片'); 
+            return false;
+          }*/
+    	var data = $('#form1').serialize();
+		  var formurl = "{:Url('index/user/autonym')}";
+		  var locurl = "{:Url('index/user/index')}";
+
+		  WPpost(formurl,data,locurl);
+		  return false;
+    }
+</script>
+{include file="footer" /}
+</body>
+</html>

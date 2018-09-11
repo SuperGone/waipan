@@ -1,0 +1,94 @@
+{include file="header" /}
+<body>
+  <div class="jy_body">
+    <div class="jy_head">
+      <a href="javascript:history.go(-1);"><img class="fl back" src="__HOME__/images/back.png"></a>
+        <div class="jylogo_l userlogo"><img src="__HOME__/images/userlogo.jpg"></div>
+      <div class="jylogo_r userx">
+        <span>￥{$userinfo.usermoney}</span>
+        <span>{$userinfo.username}</span>
+      </div>
+    </div>
+
+<ion-content class="trade_history scroll-content ionic-scroll scroll-content-false  has-header has-tabs" scroll="false">
+    <header>
+            <article class="left-table" onclick="change_category(0)" style="">
+              <p class="chicangmingxi">持仓明细</p>
+            </article>
+            <article class="right-table active" onclick="change_category(1)">
+              <p class="lishimingxi">历史明细</p>
+            </article>
+    </header>
+    <div class="trade_history_list slider" style="visibility: visible;overflow:scroll;    margin-bottom: 0.47rem;">
+      <div class="slider-slides" ng-transclude="">
+            <ion-slide class="slider-slide slider-left" data-index="0" style="left: 0px; transition-duration: 300ms; transform: translate(-100%, 0px) translateZ(0px);">
+              <ul>
+              </ul>
+            </ion-slide>
+            <ion-slide class="slider-slide slider-right" data-index="1" style="left: 0px; top: -100%; transition-duration: 300ms; transform: translate(0px, 0px) translateZ(0px);">
+                <ul class="uls">
+                </ul>
+                
+            </ion-slide>
+      </div>
+   </div>  
+
+<div class="modal-backdrop ng-hide" style="background:rgba(127, 132, 127, 0.81);">
+  <div class="message_box">
+    <!-- 顶部通栏 -->
+  <div class="ktop">
+    <div class="ktopbody top_i_box">
+      <span>历史明细</span>
+      <i onclick="close_order_modal()" class="message_box_top"></i>
+    </div>    
+  </div>
+
+  <!-- 主体 -->
+  <div class="main order-modal-content" >
+    <table class="kinds">
+      <tbody><tr>
+        <td>名称</td>
+        <td>详情</td>
+      </tr>
+      <tr>
+        <td>商品</td>
+        <td class="ptitle"></td>
+      </tr>
+      <tr>
+        <td>成交价</td>
+        <td class="buyprice"></td>
+      </tr>
+      <tr>
+        <td>结算价</td>
+        <td class="sellprice">8</td>
+      </tr>
+      <tr>
+        <td>手续费</td>
+        <td >{$conf['web_poundage']}</td>
+      </tr>
+      <tr>
+        <td>盈亏</td>
+        <td class="ploss"></td>
+      </tr>
+      <tr>
+        <td>成交时间</td>
+        <td class="buytime"></td>
+      </tr>
+      <tr>
+        <td>结算时间</td>
+        <td class="selltime"></td>
+      </tr>
+    </tbody></table>
+  </div>
+  </div>
+</div>
+
+</ion-content>  
+{include file="foot_zjjl" /}
+<script src="__HOME__/js/lk/hold.js"></script>
+<script type="text/javascript">
+  change_category(0)
+</script>
+
+</body>
+</html>

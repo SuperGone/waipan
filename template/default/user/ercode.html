@@ -1,0 +1,50 @@
+{include file="header" /}
+
+<body class="me">
+    <!-- 头部 -->
+    {include file="top" /}
+    <div class="main_box">
+        <!-- 左侧栏 -->
+        {include file="userleft" /}
+        <!-- 中间主体 -->            
+        <div class="usermain">
+             <div class="reset">
+
+                  <div class="code_body">    
+                    <div class="codeimg">
+                        <img src="{$oid_url}">
+                    </div>
+                    <span>扫一扫推广注册</span>
+                    
+                    <div class="tgfy_group">
+                        <span class="tgfy">{$tg_url}</span>
+                        <span class="send" style="top: 0;" id="btn" data-clipboard-text="{$tg_url}">复制</span>
+                    </div>
+                    <div class="tgfy_group" style="color: #999;">
+                            复制上面的链接推广注册
+                    </div>
+                    
+                    
+                  </div>
+            </div>
+        </div>
+    </div>
+    <script src="__HOME__/js/clipboard.min.js"></script>
+    <script src="__HOME__/js/clipboard.js"></script>
+    <script>
+        
+        var clipboard = new ClipboardJS('#btn');
+
+        //复制成功执行的回调，可选
+        clipboard.on('success', function(e) {
+            layer.msg('复制成功');
+        });
+
+        //复制失败执行的回调，可选
+        clipboard.on('error', function(e) {
+            layer.msg('复制失败');
+        });
+    </script>
+    {include file="footer" /}
+</body>
+</html>

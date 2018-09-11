@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>{$conf.web_name?$conf.web_name:'微交易'}</title>
+	<link rel="stylesheet" href="__HOME__/css/wapstyle.css" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">  
+	<script type="text/javascript" src="__HOME__/js/wpauto.js"></script>
+	<script src="__HOME__/js/jquery-1.9.1.min.js"></script>
+	<script src="/static/layer/layer.js"></script>
+	<script src="/static/public/js/function.js"></script>
+	<script src="/static/public/js/base64.js"></script>
+	<script type="text/javascript">
+	  var Base64 = new Base64();	  
+	</script>
+    
+</head>
+
+<body class="loginbody">
+		<!-- 顶部通栏 -->
+	<div class="ktop" style="margin-top:0.2rem;">
+		<div class="ktopbody">
+			<div class="back">
+				<a href="javascript:history.go(-1);"><img src="__HOME__/img/back.png" ></a>
+			</div>
+			<span>登陆</span>
+		</div>		
+	</div>
+	<div class="klogo">
+		<img src="{$conf['web_logo']}">
+	</div>
+	<form method="post" id="formid">
+	<div class="kform">
+		<div class="zhanghao">
+			<span>账号</span>
+			<input type="text" class="zh" name="username" >
+		</div>
+		<div class="zhanghao mima">
+			<span>密码</span>
+			<input type="password" class="zh" name="upwd" >
+		</div>
+                <div class="zhanghao mima">
+                <div id="embed-captcha"></div>
+                <p id="wait" class="show">正在加载验证码......</p>
+                <p id="notice" class="hide">请先完成验证</p>
+                </div>
+                
+		<div class="wjmm">
+			<span class="fl"><a href="{:url('login/respass')}">忘记密码？</a></span>
+			<span class="fr"><a href="{:url('login/register')}">没有账号？注册</a></span>
+		</div>
+
+		<div class="denglu">
+            <button class="btndl" id="loginactive" onclick="return checkform(this.form);">
+                立即登陆
+            </button>
+        </div>
+		
+	</div>
+	</form>
+
+</body>
+  <style>
+            #embed-captcha {
+            width: 300px;
+            margin: 10px auto 0px auto;
+        }
+        .show {
+            display: block;
+        }
+        .hide {
+            display: none;
+        }
+        #notice {
+            color: red;
+        }
+        </style>
+<script src="/static/gt.js"></script>
+<script>
+function checkform(form){
+	var username = form.username.value;
+	var upwd = form.upwd.value;
+	if(!username){
+		layer.msg('请输入用户名');
+		return false; 
+	}
+
+	if (!upwd) {
+		layer.msg('请输入密码'); 
+		return false;
+	}
+
+	 $.ajax({
+                        type: "POST",
+                        url: "{:url('index/login/check')}",
+                        data: {
+                            'username': username,
+                            'geetest_challenge':$('input[name=geetest_challenge]').val(),
+                            'geetest_validate':$('input[name=geetest_validate]').val(),
+                            'geetest_seccode':$('input[name=geetest_seccode]').val(),
+                        },
+                        dataType: "json",
+                        success: function (e) {
+                            
+                            if(e.status=="success"){
+                                var data = $('#formid').serialize();
+                                var formurl = "{:Url('login/login')}";
+                                var locurl = "{:Url('/index/index/index/token/'.$token)}";
+                                WPpost(formurl,data,locurl);
+                            }
+                        }
+                    
+        })
+    return false;
+}
+
+
+    var handlerEmbed = function (captchaObj) {
+        $("#loginactive").click(function (e) {
+            var validate = captchaObj.getValidate();
+            if (!validate) {
+                $("#notice")[0].className = "show";
+                setTimeout(function () {
+                    $("#notice")[0].className = "hide";
+                }, 2000);
+                e.preventDefault();
+            }
+        });
+        captchaObj.appendTo("#embed-captcha");
+        captchaObj.onReady(function () {
+            $("#wait")[0].className = "hide";
+        });
+    };
+    $.ajax({
+        url: "/index/login/StartCaptchaServlet?t=" + (new Date()).getTime(), 
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            initGeetest({
+                gt: data.gt,
+                challenge: data.challenge,
+                new_captcha: data.new_captcha,
+                product: "embed", 
+                offline: !data.success 
+                
+            }, handlerEmbed);
+        }
+    });
+</script>
+</html>

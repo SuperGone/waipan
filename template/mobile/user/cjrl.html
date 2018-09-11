@@ -1,0 +1,101 @@
+{include file="header" /}
+<body>
+	<!-- 顶部通栏 -->
+	<div class="codehead">
+		<div class="ktopbody">
+			
+			<a href="javascript:history.go(-1);"><img class="fl" src="__HOME__/images/back.png"></a>
+			<span>财经日历</span>
+			<i class="i_top_r" id="test1" ><span>{$dm}</span>月</i>
+			<div id="test" style="display: none;float:right;"></div>
+		</div>		
+	</div>
+	<!-- 主体 -->
+	<div class="main">
+		<!-- 周日历 -->
+		<ul class="week">
+			
+			<li>
+				<p class="day {$rq.dc1}">周一</p>
+				<p class="number {$rq.dc1}">{$rq.dd1}</p>
+			</li>
+			<li>
+				<p class="day {$rq.dc2}">周二</p>
+				<p class="number {$rq.dc2}">{$rq.dd2}</p>
+			</li>
+			<li>
+				<p class="day {$rq.dc3}">周三</p>
+				<p class="number {$rq.dc3}">{$rq.dd3}</p>
+			</li>
+			<li>
+				<p class="day {$rq.dc4}">周四</p>
+				<p class="number {$rq.dc4}">{$rq.dd4}</p>
+			</li>
+			<li>
+				<p class="day {$rq.dc5}">周五</p>
+				<p class="number {$rq.dc5}">{$rq.dd5}</p>
+			</li>
+			<li>
+				<p class="day {$rq.dc6}">周六</p>
+				<p class="number {$rq.dc6}">{$rq.dd6}</p>
+			</li>
+			<li>
+				<p class="day {$rq.dc7}">周日</p>
+				<p class="number {$rq.dc7}">{$rq.dd7}</p>
+			</li>
+		</ul>
+		
+		<!-- 国家列表 -->
+		<ul class="country">
+			{volist name="economics" id="vo"}
+			
+			<li>
+				<div class="cinfo">
+					<img src="__HOME__/images/country/<?php echo md5($vo['country']);?>.png" alt="">
+					<div class="time"><?php echo gettimehs($vo['publictime']); ?></div>
+					<div class="stars">
+						{for start="0" end="$vo.star"}
+						   <span></span>
+						{/for}
+					</div>
+				</div>
+				<div class="more">
+					<div class="title">{$vo.title}</div>
+					<div class="data">
+						<span>前值：{$vo.previous?$vo.previous:"---"}</span>
+						<span>预期：{$vo.consensus?$vo.consensus:"---"}</span>
+						<span>公布：{$vo.actual?$vo.actual:"---"}</span>
+					</div>
+					<div class="kind {$vo.status_class}">{$vo.status_name}<?php if($vo['status_name']=="利多" || $vo['status_name']=="利空"){ echo " 金银 原油";} ?></div>
+					
+				</div>
+			</li>
+			{/volist}
+			
+		</ul>
+	</div>
+<script src="__HOME__/laydate/laydate.js"></script>
+<script>
+	// laydate.render({
+	//   elem: '#test1'
+	//   ,showBottom: false
+	//   ,trigger: 'click'
+	//    ,value: new Date() 
+	// });
+	lay('#test1').on('click', function(e){
+	  laydate.render({
+	    elem: '#test'
+	     ,showBottom: false
+	    ,show: true 
+	    ,theme: '#393D49'
+	    ,closeStop: '#test1'
+	    ,done: function(value, date, endDate){
+		    location.href="/mobile/user/cjrl?dd="+value;
+		  }
+	  });
+	});
+
+</script>
+{include file="foot_cjrl" /}
+</body>
+</html>

@@ -1,0 +1,87 @@
+{include file="header" /}
+<body class="me">
+    <!-- 头部 -->
+    {include file="top" /}
+    <div class="main_box">
+        <!-- 左侧栏 -->
+        {include file="userleft" /}
+        <!-- 中间主体 -->
+        <div class="usermain">
+            <div class="reset">
+               <form method="post" id="form1" action="/index/user/editinfo1">
+                    <div class="from_group">
+                        <center><span><font size="5">实名认证</font></span>
+                        {if $userinfo.is_smrz == 2}
+                            <i class="iconfont icon-yirenzheng yrz"></i><span class="yrz lm"><font size="5">已认证</font></span>
+                            {elseif $userinfo.is_smrz == 0/}
+                            <i class="iconfont icon-weirenzheng1 wrz"></i><span class="wrz lm"><font size="5">未认证</font></span>
+                            <ul class="card_detail">
+		                    <li>
+		                    <span class="card_item">真实姓名</span>
+		                    <input class="reset_input" type="text" name="realname" placeholder="认证后无法修改"></li>
+		                    <li>
+		                    <span class="card_item">身份证号</span>
+		                    <input class="reset_input" type="text" name="id_number" placeholder="输入您的身份证号"></li>
+		                    </ul>   
+	                        <input class="submit" type="button" onclick="sb(this.form);" value="提交认证">
+                            {elseif $userinfo.is_smrz == 1/}
+                            <i class="iconfont icon-weirenzheng1 wrz"></i><span class="wrz lm"><font size="5">审核中</font></span>
+                            {elseif $userinfo.is_smrz == 3/}
+                            <i class="iconfont icon-weirenzheng wtg"></i><span class="wtg lm"><font size="5">未通过</font></span>
+                            <ul class="card_detail">
+		                    <li>
+		                    <span class="card_item">真实姓名</span>
+		                    <input class="reset_input" type="text" name="realname" placeholder="认证后无法修改"></li>
+		                    <li>
+		                    <span class="card_item">身份证号</span>
+		                    <input class="reset_input" type="text" name="id_number" placeholder="输入您的身份证号"></li>
+		                    </ul>   
+	                        <input class="submit" type="button" onclick="sb(this.form);" value="提交认证">
+                            {/if}
+                          </center>
+                    </div>
+                </form>
+                 
+            </div>
+        </div>
+    </div>
+<script>
+    function sb(form){
+        var realname = form.realname.value;
+        var id_number = form.id_number.value;
+       // var sfz_zm = form.sfz_zm.value;
+         if (!realname) {
+            layer.msg('请输入真实姓名'); 
+            return false;
+          }
+        var regName =/^[\u4e00-\u9fa5]{2,4}$/;  
+        if(!regName.test(realname)){  
+            layer.msg('真实姓名填写有误');  
+            return false;  
+        } 
+          if (!id_number) {
+            layer.msg('请输入身份证号码'); 
+            return false;
+          }
+        var regIdNo = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;  
+        if(!regIdNo.test(id_number)){  
+            layer.msg('身份证号填写有误');  
+            return false;  
+        } 
+         /* if (!sfz_zm) {
+            layer.msg('请上传身份证照片'); 
+            return false;
+          }*/
+    	var data = $('#form1').serialize();
+		  var formurl = "{:Url('index/user/autonym')}";
+		  var locurl = "{:Url('index/user/index')}";
+
+		  WPpost(formurl,data,locurl);
+		  return false;
+    }
+</script>
+
+ <!-- 页脚 -->
+    {include file="footer" /}
+</body>
+</html>

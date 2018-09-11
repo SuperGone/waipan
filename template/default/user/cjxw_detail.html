@@ -1,0 +1,45 @@
+{include file="header" /}
+<body>
+	<!-- 头部 -->
+	{include file="top" /}
+	<div class="main_box">
+		<!-- 左侧栏 -->
+		{include file="left" /}
+		<!-- 中间主体 -->
+		<div class="usermain">
+			<div class="news_box">
+			<div class="small_nav">您当前位置：首页>财经新闻</div>
+				<div class="main_title">{$result.ntitle}</div>
+				<div class="news_info"><span class="writer">{$result.nauthor}</span> • {$result.ntime|date="Y-m-d",###} • <?php echo getfname($result['fid']); ?></div>
+				<div class="small_title">{$result.ntitle}</div>
+				<div class="news_centent">
+					{$result.ncontent}
+				</div>
+			</div>
+		</div>
+		<!-- 右侧栏 -->
+		<div class="right_side">
+			<div class="ad_header">
+				<h2>官方推荐</h2>
+				<div class="line"></div>
+			</div>
+			<ul class="ad_list">
+				{volist name="tjlist" id="vo"}
+				<li>
+					<a href="/index/user/cjxw_detail?nid={$vo.nid}">
+					<img width="310" height="189" src="{$vo.ncover}" alt="" class="ad">
+					<div class="ad_title">{$vo.ntitle}</div>
+					<div class="ad_tag">广告</div>
+					</a>
+				</li>
+				{/volist}
+
+				
+			</ul>
+		</div>
+	</div>
+	<!-- 页脚 -->
+	{include file="footer" /}
+
+</body>
+</html>

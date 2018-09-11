@@ -1,0 +1,44 @@
+<div class="left_side me userleft">
+            <ul>
+                <li  {if $actionname == 'shouye' } class="active2" {/if}><a href="{:Url('/index/index/shouye/token/'.$token)}">首页<i class="icon_right"></i></a></li>
+                <li  {if $actionname == 'index' } class="active2" {/if}><a href="{:url('/index/user/index/token/'.$token)}">个人中心<i class="icon_right"></i></a></li>
+                <li  {if $actionname == 'userpay' } class="active2" {/if}><a href="{:url('/index/user/userpay')}">充值<i class="icon_right"></i></a></li>
+                <li  {if $actionname == 'outmoney' } class="active2" {/if}><a href="javascript:void(0)" onclick="txgourl()">提现<i class="icon_right"></i></a></li>
+                <li  {if $actionname == 'zhouli' } class="active2" {/if}><a href="javascript:void(0)" onclick="checkzhouli()">周周利<i class="icon_right"></i></a></li>
+                <li  {if $actionname == 'app' } class="active2" {/if}><a href="{:url('/index/user/app')}">APP下载<i class="icon_right"></i></a></li>
+                <li  {if $actionname == 'workorder' } class="active2" {/if}><a href="{:url('/index/user/workorder')}">工单/客服<i class="icon_right"></i></a></li>
+                <li  {if $actionname == 'gywm' } class="active2" {/if}><a href="{$conf.gywm_url?$conf.gywm_url:'#'}" target="_blank">关于我们<i class="icon_right"></i></a></li>
+                <li {if $actionname == 'ercode' } class="active2" {/if}><a href="{:url('/index/user/ercode')}">推广注册<i class="icon_right"></i></a></li>
+                <li {if $actionname == 'editinfo' } class="active2" {/if}><a href="{:url('/index/user/editinfo')}">修改信息<i class="icon_right"></i></a></li>
+                <li {if $actionname == 'editinfo1' } class="active2" {/if}><a href="{:url('/index/user/editinfo1')}">实名认证<i class="icon_right"></i></a></li>
+                 <li><a href="javascript:;" onclick="app_exit()">退出<i class="icon_right"></i></a></li>
+            </ul>
+</div>
+<script>
+    function txgourl(){
+        var is_smrz="{$userinfo.is_smrz}";
+        var successurl="{:url('outmoney')}";
+        if(is_smrz==2){
+            location.href=successurl;
+        }else if(is_smrz==0){
+            layer.msg("您还未提交实名认证，不可以提现！");
+        }else if(is_smrz==1){
+            layer.msg("实名认证审核中，请等待通过后再提现！");
+        }else{
+            layer.msg("实名认证未通过，请修改认证后再提现！");
+        }
+    }
+    
+    function checkzhouli(){
+        var is_zhouli="{$is_zl_wallet}";
+        if(is_zhouli==1){
+            location.href="{:url('index/zhouli/zhouli')}";
+        }else{
+            layer.confirm("没有开通周周利，是否开通？", {btn: ['确定', '取消'], title: "提示"}, function () { 
+                    location.href="{:url('index/zhouli/creat')}";
+                }); 
+        }
+    }
+    
+
+</script>

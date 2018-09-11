@@ -1,0 +1,182 @@
+{include file="header" /}
+
+<body>
+  <div class="code_body ">
+  	<div class="codehead kffixd">
+  		<a href="javascript:history.go(-1);"><img class="fl" src="__HOME__/images/back.png"></a>
+  		<span>客服工单</span>
+  	</div>
+  	
+        <div style="padding-top:60px;">
+            
+            <form method="post" action="" id="form1" onsubmit="return workorder();">
+	      	<ul class="workinputdiv">
+		         <li>
+                             <span class="">工单类型：</span>
+                             <select name="work_type">
+                                 <option value="账目异常">账目异常</option>
+                                 <option value="功能异常">功能异常</option>
+                                 <option value="操作异常">操作异常</option>
+                                 <option value="充值异常">充值异常</option>
+                                 <option value="提现异常">提现异常</option>
+                                 <option value="用户举报">用户举报</option>
+                             </select>
+                         
+                         </li>
+		        <li>
+		          <span class="">工单内容：</span>
+                          <textarea name="work_content" placeholder="工单内容" required=""></textarea>
+		      	</li>
+              <li style="height: 141px;">
+                                    <span class="">图片附件：</span>
+                                  	<span id="result"><img src="/static/index/images/workupload.jpg" onclick="f.click()" height="100" width="100"></span>
+                                    <input type="file" id="f" name="f" onchange="sc(this);" style="display:none"/>
+                                    <div id="show"></div>
+                                </li>
+		      </ul>
+
+	      <input class="submit" type="submit" value="提交">
+	    </form>
+        </div>
+      <div>
+          <span>历史工单</span>
+                   <table class="work_log_list">
+                    <thead>
+                        <tr>
+                            <th>时间</th>
+                            <th>类型</th>
+                            <th>状态</th>
+                            <th>详情</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {foreach name="workorder_list" item="v"}
+                        <tr>
+                            <td>{$v.time|date="Y-m-d H:i:s",###}</td>
+                            <td>{$v.type}</td>
+                            <td>{if condition="$v.state eq '0'"}待查{elseif condition="$v.state eq '1'")}进行中{else/}处理完成{/if}</td>
+                            <td><a href="{:url('user/workorder_view',array('id'=>$v.id))}">查看</a></td>
+                            
+                        </tr>
+                        {/foreach}
+                    </tbody>
+                </table>
+        <br/><br/><br/><br/><br/>
+      </div>
+  	
+  </div>
+    <script>
+      
+      
+      function sc(){
+    var animateimg = $("#f").val(); //获取上传的图片名 带//
+    var imgarr=animateimg.split('\\'); //分割
+    var myimg=imgarr[imgarr.length-1]; //去掉 // 获取图片名
+    var houzui = myimg.lastIndexOf('.'); //获取 . 出现的位置
+    var ext = myimg.substring(houzui, myimg.length).toUpperCase();  //切割 . 获取文件后缀
+    
+    var file = $('#f').get(0).files[0]; //获取上传的文件
+    var fileSize = file.size;           //获取上传的文件大小
+    var maxSize = 10485760;              //最大1MB
+    
+        var data = new FormData($('#form1')[0]); 
+        $.ajax({  
+            url: "/index/user/uploadimg", 
+            type: 'POST',  
+            data: data,  
+            dataType: 'JSON',  
+            cache: false,  
+            processData: false,  
+            contentType: false  
+        }).done(function(ret){  
+            if(ret['isSuccess']){
+                var result = '';
+                var result1 = '';
+                // $("#show").attr('value',+ ret['f'] +);
+                result += '<img src="' + '/public/' + ret['f']  + '"  onclick="f.click()" height="100" width="100">';
+                result1 += '<input value="' + ret['f']  + '" name="portrait" style="display:none;">';
+                $('#result').html(result);
+                $('#show').html(result1);
+                layer.msg('上传成功');
+            }else{  
+                layer.msg('上传失败');
+            }  
+        });  
+        return false;
+       
+    }
+      
+      
+      
+        function workorder()
+        {
+              $.ajax({
+                        type: "POST",
+                        url: "{:url('user/workorder')}",
+                        data: {
+                            'work_type': $('select[name=work_type]').val(),
+                            'work_content': $('textarea[name=work_content]').val(),
+                            'workimg':($('input[name=portrait]').val())?($('input[name=portrait]').val()):"",
+                        },
+                        dataType: "json",
+                        success: function (e) {
+                            layer.msg(e.msg);
+                            if(e.status=="200"){
+                                location.reload();
+                            }
+                        }
+                         })
+            return false;
+        }
+    </script>
+    <style>
+        .work_log_list{width:100%;}
+        .work_log_list th{
+            width: 25%;
+    background: #dcdcdc70;
+    height: 27px;
+        }
+        .work_log_list td{
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .workinputdiv{
+            
+        }
+        .workinputdiv select{
+            width: 75%;
+            height: 33px;
+            border-radius: 5px;
+            border: 1px solid #e2e0e0;
+        }
+        .workinputdiv textarea{
+                font-size: 15px;
+                width: 75%;
+    height: 108px;
+    border-radius: 5px;
+    border: 1px solid #e2e0e0;
+        }
+        .workinputdiv li {
+            padding: 25px;
+            background: #fff;
+            border-bottom: 1px solid #d8d8d8;
+        }
+        .workinputdiv li span {
+            float: left;
+        }
+        
+        
+    </style>
+    
+    
+    
+    
+    
+
+
+
+
+{include file="foot" /}
+
+
+</body>
+</html>

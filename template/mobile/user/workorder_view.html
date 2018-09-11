@@ -1,0 +1,196 @@
+{include file="header" /}
+<link rel="stylesheet" href="__HOME__/css/flowChart.css" />
+
+<body>
+    <div class="code_body ">
+        <div class="codehead kffixd">
+            <a href="javascript:history.go(-1);"><img class="fl" src="__HOME__/images/back.png"></a>
+            <span>客服工单</span>
+        </div>
+        <div style='padding-top: 60px;' class="codelogo1">
+            <div class="flowChart">
+                <!--左侧轴-->
+                <div class="flowChart-left">
+                    <!--虚线-->
+                    <div class="dashed"></div>
+                </div>
+                <!--右侧内容-->
+                <div class="flowChart-right">
+                    <!--一个节点-->
+                    <div class="oneNode">
+                        <!--左侧小球-->
+                        <div class="check check-prime">发起</div>
+                        <div class="tag-boder">
+                            <div class="tag"></div>
+                        </div>
+                        <!--右侧内容-->
+                        <div class="NodeDetail">
+                            <!--上-->
+                            <div class="NodeDetail-title">
+                                <div class="details">
+                                    <h4>用户ID：{$workorder_info.uid}</h4>
+                                </div>
+                            </div>
+                            <!--中-->
+                            <div class="NodeDetail-content">
+                                <p>{$workorder_info.content}
+                              	 {if condition="$workorder_info.workimg neq null"}&nbsp;<a target="_blank" style="color:#3137fb" href="/public/{$workorder_info.workimg}">附件</a>{/if}
+                              </p>
+                            </div>
+                            <!--下-->
+                            <div class="NodeDetail-footer">
+                                <span>{$workorder_info.time|date="Y-m-d H:i:s",###}</span>
+                            </div>
+                        </div>
+                    </div>
+{foreach name="workorder_reply" item="v"}
+                    <div class="oneNode">
+                        {if condition="$v.type eq '1'"}
+                            <div class="check check-warning">
+                                回复
+                            </div>
+                        {elseif condition="$v.type eq '2'"}
+                            <div class="check">
+                                结束
+                            </div>
+                        {/if}
+                    
+                        <div class="tag-boder">
+                            <div class="tag"></div>
+                        </div>
+                        <!--右侧内容-->
+                        <div class="NodeDetail">
+                            <!--上-->
+                            <div class="NodeDetail-title">
+                                <div class="details">
+                                    <h4>{if condition="$v.people eq '0'"}系统客服{else/}用户ID：{$v.people}{/if}</h4>
+                                </div>
+                            </div>
+                            <!--中-->
+                            <div class="NodeDetail-content">  
+                                <p>{$v.content}{if condition="isset($v.workimg) eq true"}
+                                  	{if condition="$v.workimg neq null"}&nbsp;<a target="_blank" style="color:#3137fb" href="/public/{$v.workimg}">附件</a>{/if}
+                                  {/if}</p>
+                            </div>
+                            <!--下-->
+                            <div class="NodeDetail-footer">
+                                <span>{$v.datetime|date="Y-m-d H:i:s",###}</span>
+                            </div>
+                        </div>
+                    </div>
+{/foreach}
+                </div>
+            </div>
+            <br/><br/><br/><br/><br/><br/>
+           <div class="replydiv">
+                <form action="" id="form1" method="post" onsubmit="return Reply()">
+                  <button id="upbutton" onclick="f.click()">+</button>
+                     <input type="file" id="f" name="f" onchange="sc(this);" style="display:none"/>
+                     <div id="show" style="display:none;"></div>
+                    <input class="replycontent" name="content" type="text" required="" placeholder="请填写反馈信息"/>
+                    <input class="replysubmit" type="submit" />
+                </form>
+                
+            </div>
+        </div>
+		
+    </div>
+   <style>
+             #upbutton{
+      	    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 4px 6px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 10px;
+    border-radius: 5px;
+      margin-left: 10px;
+      }
+      .code_body{text-align: left;}
+    .replydiv{
+      background: #dcdada;
+      position: fixed;
+      bottom: 0px;
+      width: 100%;
+    }
+    .replycontent{
+        height: 39px;
+        margin-top: 10px;
+       margin-bottom: 10px;
+        width: 64%;
+        border-radius: 5px;
+    }
+    .replysubmit{
+    	    background: #5eb553;
+    color: #fff;
+    padding: 10px 32px;
+    border-radius: 5px;
+    }
+    
+    
+  </style>
+    <script>
+      
+          
+       function sc(){
+    var animateimg = $("#f").val(); //获取上传的图片名 带//
+    var imgarr=animateimg.split('\\'); //分割
+    var myimg=imgarr[imgarr.length-1]; //去掉 // 获取图片名
+    var houzui = myimg.lastIndexOf('.'); //获取 . 出现的位置
+    var ext = myimg.substring(houzui, myimg.length).toUpperCase();  //切割 . 获取文件后缀
+    
+    var file = $('#f').get(0).files[0]; //获取上传的文件
+    var fileSize = file.size;           //获取上传的文件大小
+    var maxSize = 10485760;              //最大1MB
+    
+        var data = new FormData($('#form1')[0]); 
+        $.ajax({  
+            url: "/index/user/uploadimg", 
+            type: 'POST',  
+            data: data,  
+            dataType: 'JSON',  
+            cache: false,  
+            processData: false,  
+            contentType: false  
+        }).done(function(ret){  
+            if(ret['isSuccess']){
+                var result1 = '';
+                result1 += '<input value="' + ret['f']  + '" name="portrait" style="display:none;">';
+                $('#show').html(result1);
+              	$('#upbutton').html('✔');
+                layer.msg('上传成功');
+            }else{  
+                layer.msg('上传失败');
+            }  
+        });  
+        return false;
+    }
+        function Reply(){
+                var content=$('input[name=content]').val();
+                 $.ajax({
+                        type: "POST",
+                        url: "{:url('user/workorder_reply')}",
+                        data: {
+                            'content': content,
+                            'workid': "{$workorder_info.id}",
+                          	'workimg':($('input[name=portrait]').val())?($('input[name=portrait]').val()):"",
+                        },
+                        dataType: "json",
+                        success: function (e) {
+                            layer.msg(e.msg,{time:2000});
+                            if(e.status=="200"){
+                                location.reload();
+                            }
+                        }
+                         })
+          
+          return false;
+        }
+        
+    </script>
+
+
+</body>
+</html>

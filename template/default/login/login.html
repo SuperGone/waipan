@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>{$conf.web_name?$conf.web_name:'微交易'}</title>
+	<link rel="stylesheet" href="__HOME__/css/wapstyle.css" />
+	<link rel="stylesheet" type="text/css" href="__HOME__/css/pc.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">  
+	<script src="__HOME__/js/jquery-1.9.1.min.js"></script>
+	<script src="/static/layer/layer.js"></script>
+	<script src="/static/public/js/function.js"></script>
+	<script src="/static/public/js/base64.js"></script>
+	<script type="text/javascript">
+	  var Base64 = new Base64();	  
+	</script>
+    
+</head>
+
+<body>
+	<!-- 头部 -->
+	<div class="header">
+		<div class="header_inner login">
+			<div class="brand">
+				<a href="/"><img alt="logo1" class="logo1" src="{$conf['pcweb_logo']}"></a>
+				<a href="/"><img alt="logo2" class="logo2" src="{$conf['pcweb_logo2']}"></a>
+			</div>
+			<ul id="lang" class="jsSelect">
+				<i class="icon icon-filter-arrow"></i>
+				<li><a href="#" class="s"><i class="en"></i>中文</a></li>
+				<li><a href="#"> <i class="zh-cn"></i>English</a></li>
+				<li><a href="#"><i class="other"></i>其他</a></li> 
+			</ul> 
+		</div>
+	</div>
+	<!-- 轮播 -->
+	<div class="banner">
+		<ul class="banner_list">
+			<li class="banner_item show">
+					<img src="__HOME__/images/mainbg_0.png">
+					<div class="login_title">双重安全保障机制1</div>
+				</a>
+			</li>
+			<ul class="index login" id="login">
+			</ul>
+		</ul>
+	</div>
+	<!-- 登录表单 -->
+	<div class="login_box">
+		<form class="login" id="formid" method="post">
+	        <div class="text">帐号</div>
+	        <input type="text" class="username" id="username" name="username" v-model="uname" @blur="blur1" placeholder="输入用户名/邮箱/手机">
+	        <div class="text">密码</div>
+	        <input type="password" class="password" id="upwd" name="upwd" v-model="pwd" @blur="blur2" placeholder="输入密码">
+                <br/>
+                <div id="embed-captcha"></div>
+                <p id="wait" class="show">正在加载验证码......</p>
+                <p id="notice" class="hide">请先完成验证</p>
+	        <div class="submit" id="loginactive" onclick="return checkform();" >登录</div>
+	        <div class="forget">
+		        <a href="{:url('login/respass')}" style="color: #fff;"><div class="forget_password">忘记密码？</div></a>
+		        <div class="register" style="float:right;"><a href="{:url('login/register')}">没有账号？注册</a></div>
+		    </div>
+	    </form>
+	</div>
+        
+        <style>
+          
+          .geetest_holder ,.geetest_wind ,.geetest_detect{
+          width:270px !important;
+          }
+            #embed-captcha {
+            width: 250px;
+            margin-top: 30px;
+        }
+        .show {
+            display: block;
+        }
+        .hide {
+            display: none;
+        }
+        #notice {
+            color: red;
+        }
+        </style>
+<script src="/static/gt.js"></script>
+<script>
+    
+    function checkform(){
+	var form=$("#formid");
+	var username = $("#username").val();
+	var upwd = $("#upwd").val();
+	if(!username){
+		layer.msg('请输入用户名');
+		return false; 
+	}
+        
+	if (!upwd) {
+		layer.msg('请输入密码'); 
+		return false;
+	}
+         $.ajax({
+                        type: "POST",
+                        url: "{:url('index/login/check')}",
+                        data: {
+                            'username': username,
+                            'geetest_challenge':$('input[name=geetest_challenge]').val(),
+                            'geetest_validate':$('input[name=geetest_validate]').val(),
+                            'geetest_seccode':$('input[name=geetest_seccode]').val(),
+                        },
+                        dataType: "json",
+                        success: function (e) {
+                            
+                            if(e.status=="success"){
+                                var data = $('#formid').serialize();
+                                var formurl = "{:Url('login/login')}";
+                                var locurl = "{:Url('/index/index/index/token/'.$token)}";
+                                WPpost(formurl,data,locurl);
+                            }
+                        }
+                    
+        })
+
+	
+    return false;
+}
+    
+    var handlerEmbed = function (captchaObj) {
+        $("#loginactive").click(function (e) {
+            var validate = captchaObj.getValidate();
+            if (!validate) {
+                $("#notice")[0].className = "show";
+                setTimeout(function () {
+                    $("#notice")[0].className = "hide";
+                }, 2000);
+                e.preventDefault();
+            }
+        });
+        captchaObj.appendTo("#embed-captcha");
+        captchaObj.onReady(function () {
+            $("#wait")[0].className = "hide";
+        });
+    };
+    $.ajax({
+        url: "/index/login/StartCaptchaServlet?t=" + (new Date()).getTime(), 
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            console.log(data);
+            initGeetest({
+                gt: data.gt,
+                challenge: data.challenge,
+                new_captcha: data.new_captcha,
+                product: "embed", 
+                offline: !data.success 
+                
+            }, handlerEmbed);
+        }
+    });
+</script>   
+        
+        
+	<!-- 中间主体 -->
+	<div class="loginmain">
+		<div class="part_left">
+			<div class="time_line login">
+				<!-- <span class="time_before"><</span> -->
+				<ul class="time_list login">
+					<li class="{$rq.dc1}"><span>周一</span><span><?php echo date('m');?>/{$rq.dd1}</span></li>
+					<li class="{$rq.dc2}"><span>周二</span><span><?php echo date('m');?>/{$rq.dd2}</span></li>
+					<li class="{$rq.dc3}"><span>周三</span><span><?php echo date('m');?>/{$rq.dd3}</span></li>
+					<li class="{$rq.dc4}"><span>周四</span><span><?php echo date('m');?>/{$rq.dd4}</span></li>
+					<li class="{$rq.dc5}"><span>周五</span><span><?php echo date('m');?>/{$rq.dd5}</span></li>
+					<li class="{$rq.dc6}"><span>周六</span><span><?php echo date('m');?>/{$rq.dd6}</span></li>
+					<li class="{$rq.dc7}"><span>周日</span><span><?php echo date('m');?>/{$rq.dd7}</span></li>
+				</ul>
+				<!-- <span class="time_after">></span> -->
+			</div>
+			<table class="cjrl login">
+				<tr class="header">
+					<td class="w_70">时间</td>
+					<td>指标名称</td>
+					<td class="w_200">影响</td>
+				</tr>
+				{volist name="economics" id="vo"}
+				<tr>
+					<td>
+						<div class="time"><?php echo gettimehs($vo['publictime']); ?></div>
+						<img width="28" height="21" src="__HOME__/images/country/<?php echo md5($vo['country']);?>.png" alt="country" class="country">
+					</td>
+					<td>
+						<p></p>
+						<p class="point_number">
+							<span>前值：{$vo.previous?$vo.previous:"---"}</span>
+							<span>预期：{$vo.consensus?$vo.consensus:"---"}</span>
+							<span>公布：{$vo.actual?$vo.actual:"---"}</span>
+						</p>
+					</td>
+					<td>
+						<div class="kind {$vo.status_class}">{$vo.status_name}<?php if($vo['status_name']=="利多" || $vo['status_name']=="利空"){ echo " 金银 原油";} ?></div>
+						<div class="stars">
+							{for start="0" end="$vo.star"}
+						   <span></span>
+						{/for}
+						</div>
+					</td>
+				</tr>
+				{/volist}
+			</table>
+		</div>
+		<div class="part_right">
+			<div class="right_title"><i></i><span>市场数据</span></div>
+			<ul class="right">
+			{volist name="sclist" id="vo"}
+				<li>
+					<div class="left fl">
+						<i></i>
+						<div class="time">{$vo.ntime|date="H:i:s",###}</div>
+					</div>
+					<div class="right" style="line-height: 33px;">
+						<a href="/index/user/cjxw_detail?nid={$vo.nid}">
+						<p>{$vo.ntitle}</p>
+					</a>
+					</div>
+				</li>
+			{/volist}	
+				
+			</ul>
+		</div>
+	</div>
+        <div style="clear :both;"></div>
+	<!-- 页脚 -->
+	<div class="footer">
+		<div class="footerinner">
+			<p>Copyright © 2013 - 2018 Jin10.com All Rights Reserved</p>
+			<p>粤公网安备 4480701111454</p>
+		</div>
+		<div class="footerinner">
+			<div class="beian">
+				<img src="__HOME__/images/beian1.png" alt="备案信息">
+				<img src="__HOME__/images/beian2.png" alt="备案信息">
+			</div>
+		</div>
+	</div>
+</body>
+</html>

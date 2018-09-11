@@ -1,0 +1,127 @@
+{include file="header" /}
+
+<body class="loginbody">
+    <!-- 顶部通栏 -->
+  <div class="ktop" style="background: none;">
+    <div class="ktopbody">
+      <div class="back">
+        <a href="javascript:history.go(-1);"><img src="__HOME__/images/back.png" ></a>
+      </div>
+      <span>找回密码</span>
+    </div>    
+  </div>
+  <form method="post" id="formid">
+  <div class="rgform">
+    <div class="zhanghao rg sjhm">
+      <span>手机号码</span>
+      <input type="text" class="zh username" name="username" >
+    </div>
+    <div class="zhanghao rg yzm">
+      <span>验证码</span>
+      <input type="text" class="zh" name="phonecode" >
+      <span class="hqyzm code_btn" onclick ="return get_svg();">获取验证码</span>
+    </div>
+    <div class="zhanghao rg yzm">
+      <span>新密码</span>
+      <input type="password" class="zh" name="upwd" >
+    </div>
+    <div class="zhanghao sjhm rg">
+      <span>确认密码</span>
+      <input type="password" class="zh" name="upwd2" >
+    </div>    
+    <div class="zhuce">
+            <button class="btndl" onclick="return checkform(this.form);">
+                重置密码
+            </button>
+        </div>
+        <div class="wjmm">
+      <span><a href="javascript:history.go(-1);">返回</a></span>
+    </div>
+    
+  </div>
+  </form>
+
+</body>
+<script>
+function checkform(form){
+  var username = form.username.value;
+  var upwd = form.upwd.value;
+  var upwd2 = form.upwd2.value;
+  if(!username){
+    layer.msg('请输入手机号');
+    return false; 
+  }
+  if (!upwd) {
+    layer.msg('请输入登录密码'); 
+    return false;
+  }
+
+  if (!upwd2) {
+    layer.msg('请再次输入登录密码'); 
+    return false;
+  }
+  if(upwd.length < 6 || upwd2.length < 6){
+    layer.msg('密码长度大于6位'); 
+    return false;
+  }
+  if(upwd != upwd2){
+    layer.msg('两次输入密码不同'); 
+    return false;
+  }
+  var data = $('#formid').serialize();
+  var formurl = "{:Url('login/respass')}";
+  var locurl = "{:Url('mobile/user/index')}";
+
+    WPpost(formurl,data,locurl);
+    return false;
+}
+
+/**
+ * 发送验证码
+ * @return {[type]} [description]
+ */
+function get_svg() {
+  
+  
+  var phone = $('.username').val();
+
+  if(!(/^1[34578]\d{9}$/.test(phone))){
+        layer.msg("请正确输入手机号！");
+        return false;
+    }
+
+  
+  var url = "/mobile/login/sendmsm/phone/"+phone+"/moban/44";
+  $.get(url,function(resdata){
+    console.log(resdata);
+    layer.msg(resdata.data);
+    if(resdata.type == 1){
+      $(".code_btn").attr('onclick',"return false;");
+      listion_sendmsm();
+    }
+  })
+  return false;
+}
+
+function listion_sendmsm(){
+
+   var time= 61;
+    setTime=setInterval(function(){
+        if(time<=1){
+            clearInterval(setTime);
+            $(".code_btn").text("再发一次");
+            $(".code_btn").attr('onclick',"return get_svg();");
+            return;
+        }
+        time--;
+        $(".code_btn").text(time+"s");
+
+    },1000);
+}
+
+
+
+</script>
+</html>
+
+

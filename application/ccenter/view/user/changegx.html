@@ -1,0 +1,66 @@
+{include file="head" /}
+
+{include file="menu" /}
+
+
+
+   <!--main content start-->
+      <section id="main-content">
+          <section class="wrapper">
+
+              <div class="row state-overview">
+                <div class="container">
+                <form id="formid" action="{:url('user/userlist')}" method="post">
+                <div class="row">
+                     <div class="col-lg-3 mar-10">
+                      <div class="input-group">
+                              <span class="input-group-addon">ID</span>
+                              <input type="text" value="" placeholder="请输入要修改的人的ID" name="uid" class="form-control">
+                          </div>
+                      </div>
+                      <div class="col-lg-5 mar-10">
+
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">上级ID</span>
+                            <input type="text"  value=""  class="form-control" name="oid" placeholder="请输入此人上级ID"/>
+                        </div>
+                      </div>
+
+                      
+                  <div class="mar-10">
+                   <input type="button" onclick="return editcon(this.form)" class="btn btn-success" value="提交">
+                  </div>
+                </div>
+                </form>
+              </div>
+              
+                 
+              
+              <!-- page end-->
+          </section>
+      </section>
+      <!--main content end-->
+  </section>
+
+
+{include file="foot" /}
+<script>
+  function editcon(form){
+    
+    var uid = form.uid.value;
+    var oid = form.oid.value;
+
+ 
+    if(!uid){layer.msg('请输入要修改的人的ID'); return false;}
+    if(!oid){layer.msg('请输入此人上级ID'); return false;}
+    
+    var formurl = "{:Url('user/dochangegx')}";
+      var data = $('#formid').serialize();
+      var locurl = "{:Url('user/myteam')}";
+
+      WPpost(formurl,data,locurl);
+
+      return false;
+  }
+</script>
+

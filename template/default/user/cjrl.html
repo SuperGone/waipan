@@ -1,0 +1,106 @@
+{include file="header" /}
+<body>
+	<!-- 头部 -->
+	{include file="top" /}
+	<div class="main_box">
+		<!-- 左侧栏 -->
+		{include file="left" /}
+		<!-- 中间主体 -->
+		<div class="cjrlmain">
+			<div class="time_line">
+				<!-- <span class="time_before"><</span> -->
+				<ul class="time_list login">
+					<li class="{$rq.dc1}"><span>周一</span><span><?php echo date('m');?>/{$rq.dd1}</span></li>
+					<li class="{$rq.dc2}"><span>周二</span><span><?php echo date('m');?>/{$rq.dd2}</span></li>
+					<li class="{$rq.dc3}"><span>周三</span><span><?php echo date('m');?>/{$rq.dd3}</span></li>
+					<li class="{$rq.dc4}"><span>周四</span><span><?php echo date('m');?>/{$rq.dd4}</span></li>
+					<li class="{$rq.dc5}"><span>周五</span><span><?php echo date('m');?>/{$rq.dd5}</span></li>
+					<li class="{$rq.dc6}"><span>周六</span><span><?php echo date('m');?>/{$rq.dd6}</span></li>
+					<li class="{$rq.dc7}"><span>周日</span><span><?php echo date('m');?>/{$rq.dd7}</span></li>
+				</ul>
+				<i class="i_top_r" style="width:150px;" id="test1" ><span>{$dm}</span>月</i>
+				<!-- <i class="i_top_r" id="test" style="display: none;"></i> -->
+				<!-- <span class="time_after">></span> -->
+			</div>
+			<table class="cjrl">
+				<tr class="header">
+					<td>地区</td>
+					<td>时间</td>
+					<td class="w_200">指标名称</td>
+					<td>前值</td>
+					<td>预期</td>
+					<td>公布</td>
+					<td class="w_200">影响</td>
+				</tr>
+				{volist name="economics" id="vo"}
+				<tr>
+					<td><img class="country" width="40" height="30" alt="country"  src="__HOME__/images/country/<?php echo md5($vo['country']); ?>.png"></td>
+					<td><?php echo gettimehs($vo['publictime']); ?></td>
+					<td>{$vo.title}</td>
+					<td>{$vo.previous?$vo.previous:"---"}</td>
+					<td>{$vo.consensus?$vo.consensus:"---"}</td>
+					<td>{$vo.actual?$vo.actual:"---"}</td>
+					<td>
+						<div class="kind {$vo.status_class}">{$vo.status_name}<?php if($vo['status_name']=="利多" || $vo['status_name']=="利空"){ echo " 金银 原油";} ?></div>
+						<div class="stars">
+							{for start="0" end="$vo.star"}
+							   <span></span>
+							{/for}
+						</div>
+					</td>
+				</tr>
+				{/volist}
+			</table>
+		</div>
+		<!-- 右侧栏 -->
+		<div class="right_side">
+			<div class="ad_header">
+				<h2>官方推荐</h2>
+				<div class="line"></div>
+			</div>
+			<ul class="ad_list">
+				{volist name="tjlist" id="vo"}
+				<li>
+					<a href="">
+					<img width="310" height="189" src="{$vo.ncover}" alt="" class="ad">
+					<div class="ad_title">{$vo.ntitle}</div>
+					<div class="ad_tag">广告</div>
+					</a>
+				</li>
+				{/volist}
+
+				
+			</ul>
+		</div>
+	</div>
+	<!-- 页脚 -->
+	{include file="footer" /}
+
+<script src="__HOME__/laydate/laydate.js"></script>
+<script>
+	laydate.render({
+	  elem: '#test1'
+	  ,showBottom: false
+	  ,trigger: 'click'
+	   ,value: new Date() 
+	   ,done: function(value, date, endDate){
+		    location.href="/index/user/cjrl?dd="+value;
+		  }
+	});
+	// lay('#test1').on('click', function(e){
+	//   laydate.render({
+	//     elem: '#test'
+	//      ,showBottom: false
+	//     ,show: true 
+	//     ,theme: '#393D49'
+	//     ,closeStop: '#test1'
+	//     ,done: function(value, date, endDate){
+	// 	    location.href="/index/user/cjrl?dd="+value;
+	// 	  }
+	//   });
+	// });
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,10 @@
+<div class="left_side">
+      <ul>
+        <li  {if $actionname == 'shouye' } class="active" {/if}><a href="{:Url('/index/index/shouye/token/'.$token)}"><i class="list_icon1"></i><span>首页</span></a></li>
+        <li  {if $contrname == 'Index'&& $actionname == 'index' or $actionname == 'goods' } class="active" {/if}><a href="{:Url('/index/index/index/token/'.$token)}"><i class="list_icon2"></i><span>产品交易</span></a></li>
+        <li  {if $actionname == 'cjxw' or $actionname == 'cjxw_detail' } class="active" {/if}><a href="{:url('/index/user/cjxw/token/'.$token)}"><i class="list_icon3"></i><span>财经新闻</span></a></li>
+        <li  {if $actionname == 'cjrl' } class="active" {/if}><a href="{:url('/index/user/cjrl/token/'.$token)}"><i class="list_icon4"></i><span>财经日历</span></a></li>
+        <li  {if $actionname == 'hold' } class="active" {/if}><a href="{:url('/index/order/hold/token/'.$token)}"><i class="list_icon5"></i><span>交易记录</span></a></li>
+        <li  {if $contrname == 'user'&& $actionname == 'shouye' } class="active" {/if}><a href="{:url('/index/user/index/token/'.$token)}"><i class="list_icon6"></i><span>我的</span></a></li>
+      </ul>
+    </div>

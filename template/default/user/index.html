@@ -1,0 +1,77 @@
+{include file="header" /}
+
+<script>
+var pay_type = '';
+var wxpay_info = '';
+var returnrul = "{:url('user/index')}";
+</script>
+<body class="me">
+    <!-- 头部 -->
+    {include file="top" /}
+    <div class="main_box">
+        <!-- 左侧栏 -->
+        {include file="userleft" /}
+        <!-- 中间主体 -->
+        <div class="usermain">
+            <div class="my_info">
+                <div class="my_info_inner">
+                <form method="post" id="form1" action="/index/user/editinfo">
+                    <img class="my_icon" id="my_icon"  onclick="f.click()" src="<?php if($userinfo['portrait']){echo '/public/'.$userinfo['portrait'];}else{echo '__HOME__/images/userlogo.jpg';} ?>" alt="">
+                    <div class="revise"  onclick="f.click()" ><i class="revise"></i>修改头像</div>
+                     <input type="file" id="f" name="f" onchange="sc(this);" style="display:none"/>
+                </form>
+                    <div class="my_name">当前昵称：{$userinfo.nickname?$userinfo.nickname:$userinfo.username}{if $userinfo.otype == 101} (代理商 邀请码：{$userinfo.uid}) {/if}</div>
+                     <div class="my_name">ID:{$userinfo.uid}</div>
+                     <div class="my_name">余额：{$userinfo.usermoney}{if $userinfo.otype == 101} (保证金：{$userinfo.minprice?$userinfo.minprice:'0'}) {/if}</div>
+                    <!-- <form class="me" method="post" action="">
+                        <input class="me" type="text" name="">
+                        <div class="sure">确定修改</div>
+                    </form> -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 页脚 -->
+    {include file="footer" /}
+</body>
+<script type="text/javascript">
+    function sc(){
+    var animateimg = $("#f").val(); //获取上传的图片名 带//
+    var imgarr=animateimg.split('\\'); //分割
+    var myimg=imgarr[imgarr.length-1]; //去掉 // 获取图片名
+    var houzui = myimg.lastIndexOf('.'); //获取 . 出现的位置
+    var ext = myimg.substring(houzui, myimg.length).toUpperCase();  //切割 . 获取文件后缀
+    
+    var file = $('#f').get(0).files[0]; //获取上传的文件
+    var fileSize = file.size;           //获取上传的文件大小
+    var maxSize = 1048576;              //最大1MB
+    if(ext !='.PNG' && ext !='.GIF' && ext !='.JPG' && ext !='.JPEG' && ext !='.BMP'){
+        parent.layer.msg('文件类型错误,请上传图片类型');
+        return false;
+    }else if(parseInt(fileSize) >= parseInt(maxSize)){
+        parent.layer.msg('上传的文件不能超过1MB');
+        return false;
+    }else{  
+        var data = new FormData($('#form1')[0]); 
+        $.ajax({  
+            url: "/index/user/uploaduserimg", 
+            type: 'POST',  
+            data: data,  
+            dataType: 'JSON',  
+            cache: false,  
+            processData: false,  
+            contentType: false  
+        }).done(function(ret){  
+            if(ret['isSuccess']){
+                
+                $('#my_icon').attr('src','/public/' + ret['f']);
+                layer.msg('修改成功');
+            }else{  
+                layer.msg('修改失败');
+            }  
+        });  
+        return false;
+       }  
+    }
+</script>
+</html>

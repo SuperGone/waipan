@@ -1,0 +1,160 @@
+{include file="head" /}
+
+{include file="menu" /}
+
+
+<!--main content start-->
+      <section id="main-content">
+          <section class="wrapper">
+              <!--state overview start-->
+              
+              <div class="row state-overview">
+                <div class="container">
+                <div class="row">
+                      <form action="{:url('log')}" method="get">
+                      <div class="col-lg-3 mar-10">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">用户编号</span>
+                            <input type="text" value="{$getdata.username?$getdata.username:''}" placeholder="编号" class="form-control" name="username" />
+                        </div>
+                      </div>
+
+                      <div class="col-lg-6 mar-10">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="basic-addon1">结算时间</span>
+                            <input type="text"  id="datetimepicker" class="form-control" placeholder="点击选择时间" name="starttime" value="{$getdata.starttime?$getdata.starttime:''}"/>
+                            <span class="input-group-addon" id="basic-addon1">至</span>
+                            <input type="text"  id="datetimepicker_end" class="form-control" placeholder="点击选择时间" name="endtime" value="{$getdata.endtime?$getdata.endtime:''}" />
+                        </div>
+                      </div>
+
+                    <div class="mar-10 col-lg-3">
+                   <input type="submit" class="btn btn-success" value="搜索">
+                  </div>
+
+                      
+                  </div>
+                  
+
+                  </form>
+                </div>
+                
+              </div>
+              <br><br><br>
+            <div class="row state-overview">
+                  <div class="col-lg-2 col-sm-2">
+                      <section class="panel">
+                          <div class="symbol red color_white">
+                              <h5>钱包总额</h5>
+                          </div>
+                          <div class="order-boo">
+                              <h1 id="all_res">{$tongji.wallet}</h1>
+                          </div>
+                      </section>
+                  </div>
+                  <div class="col-lg-2 col-sm-2">
+                      <section class="panel">
+                          <div class="symbol gray color_white">
+                              <h5>转入总额</h5>
+                          </div>
+                          <div class="order-boo">
+                              <h1 id="all_cash">{$tongji.res}</h1>
+                          </div>
+                      </section>
+                  </div>
+                  <div class="col-lg-2 col-sm-2">
+                      <section class="panel">
+                          <div class="symbol blue color_white">
+                              <h5>佣金总额</h5>
+                          </div>
+                          <div class="order-boo">
+                              <h1 id="all_yj">{$tongji.yongjin}</h1>
+                          </div>
+                      </section>
+                  </div>
+
+                  <div class="col-lg-2 col-sm-2">
+                      <section class="panel">
+                          <div class="symbol red color_white">
+                              <h5>转出总额</h5>
+                          </div>
+                          <div class="order-boo">
+                              <h1 id="all_hl">{$tongji.cash}</h1>
+                          </div>
+                      </section>
+                  </div>
+
+                  <div class="col-lg-2 col-sm-2">
+                      <section class="panel">
+                          <div class="symbol terques color_white">
+                              <h5>获利总额</h5>
+                          </div>
+                          <div class="order-boo">
+                              <h1 id="tody_ploss">{$tongji.yingli}</h1>
+                          </div>
+                      </section>
+                  </div>
+
+              </div>
+                      </div>
+
+             <div class="row">
+                  <div class="col-lg-12">
+                      <section class="panel">
+                          <header class="panel-heading">
+                              资金报表
+                          </header>
+                          <table class="table table-striped table-advance table-hover">
+                            <thead class="ordertable">
+                              <tr>
+                                <th>用户</th>
+                                <th>转入钱包总额</th>
+                                <th>转入次数</th>
+                                <th>转出总额</th>
+                                <th>转出次数</th>
+                                <th>分佣总额</th>
+                                <th>分佣总次数</th>
+                                <th>周周利盈利总额</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                          <!-- {volist name="_list" id="vo"} -->
+                              <tr>
+                                  
+                                 <td>{$vo.uid}({$vo.nickname})</td>
+                                 <td>{$vo.all_res?$vo.all_res:'0'}</td>
+                                 <td>{$vo.all_res_count?$vo.all_res_count:'0'}</td>
+                                 <td>{$vo.all_cash?$vo.all_cash:'0'}</td>
+                                 <td>{$vo.all_cash_count?$vo.all_cash_count:'0'}</td>
+                                 <td>{$vo.all_fenyong?$vo.all_fenyong:'0'}</td>
+                                 <td>{$vo.all_fenyong_count?$vo.all_fenyong_count:'0'}</td>
+                                 <td>{$vo.all_yingli?$vo.all_yingli:'0'}</td>
+                              </tr>
+							           <!-- {/volist} -->
+                             
+                              </tbody>
+                          </table>
+                      </section>
+                  
+              
+                      {$list->render()}
+                </div>
+              </div>
+
+
+          </section>
+
+
+      </section>
+      <!--main content end-->
+  </section>
+
+{include file="foot" /}
+
+<script>  
+//时间选择器
+$('#datetimepicker').datetimepicker();
+$('#datetimepicker_end').datetimepicker();
+
+
+</script>

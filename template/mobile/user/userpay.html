@@ -1,0 +1,59 @@
+{include file="header" /}
+<body>
+  <div class="code_body">
+    <div class="codehead">
+        <a href="javascript:history.go(-1);"><img class="fl" src="__HOME__/images/back.png"></a>
+        <span>用户充值</span>
+    </div>
+      </div>
+    <div class="main">
+        <!-- 充值金额 -->
+        <div class="ul_title no_bg">请选择充值金额</div>
+        <form action="{:url('/mobile/user/qswlpay')}" method="post" id="postform">
+            <input class="number" type="text" id="price" name="price" readonly="readonly">
+            <input type="hidden" name="user" id="user" value="{$userinfo.uid}">
+        
+        <ul class="chong">
+            {volist name="reg_push" id="vo"}
+                <li>
+                    <span class="small">{$vo}元</span> 
+                </li>
+            {/volist}
+        </ul>
+        <!-- 充值方式 -->
+        <div class="ul_title">选择充值方式</div>
+        <ul class="pay">
+            <li>
+                <i class="zfb"></i>
+                <div class="detail">
+                    <div class="name">支付宝钱包</div>
+                    <div class="info">支持支付宝余额和银行卡充值</div>
+                </div>
+                <input class="radio" type="radio" name="type" value="alipay"> 
+            </li>
+            <li>
+                <i class="wx"></i>
+                <div class="detail">
+                    <div class="name">微信支付</div>
+                    <div class="info">支持微信余额和银行卡充值</div>
+                </div>
+                <input class="radio" group="type" type="radio" name="type" value="wxpay"> 
+            </li>
+        </ul>
+
+        <input class="submit" type="submit" name="submit" value="确定">
+        </form>
+    </div>
+
+</body>
+
+<script type="text/javascript">
+        $(function(){
+            $(".chong li").click(function(){
+                var txt = $(this).find("span").text();
+                var reg=/[\u4E00-\u9FA5]/g;
+                $("#price").val(txt.replace(reg,''));
+            });
+        });
+    </script>
+</html>
