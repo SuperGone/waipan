@@ -2,67 +2,64 @@
 
 use think\Db;
 
-
 function get_client_ip($type = 0) {
-    $type       =  $type ? 1 : 0;
-    static $ip  =   NULL;
-    if ($ip !== NULL) return $ip[$type];
+    $type = $type ? 1 : 0;
+    static $ip = NULL;
+    if ($ip !== NULL)
+        return $ip[$type];
     if (isset($_SERVER['HTTP_CLIENT_IP'])) {//客户端的ip
-        $ip     =   $_SERVER['HTTP_CLIENT_IP'];
-    }elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {//浏览当前页面的用户计算机的网关
-        $arr    =   explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-        $pos    =   array_search('unknown',$arr);
-        if(false !== $pos) unset($arr[$pos]);
-        $ip     =   trim($arr[0]);
+        $ip = $_SERVER['HTTP_CLIENT_IP'];
+    } elseif (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) {//浏览当前页面的用户计算机的网关
+        $arr = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+        $pos = array_search('unknown', $arr);
+        if (false !== $pos)
+            unset($arr[$pos]);
+        $ip = trim($arr[0]);
     }elseif (isset($_SERVER['REMOTE_ADDR'])) {
-        $ip     =   $_SERVER['REMOTE_ADDR'];//浏览当前页面的用户计算机的ip地址
-    }else{
-        $ip=$_SERVER['REMOTE_ADDR'];
+        $ip = $_SERVER['REMOTE_ADDR']; //浏览当前页面的用户计算机的ip地址
+    } else {
+        $ip = $_SERVER['REMOTE_ADDR'];
     }
     // IP地址合法验证
-    $long = sprintf("%u",ip2long($ip));
-    $ip   = $long ? array($ip, $long) : array('0.0.0.0', 0);
+    $long = sprintf("%u", ip2long($ip));
+    $ip = $long ? array($ip, $long) : array('0.0.0.0', 0);
     return $ip[$type];
 }
 
-function viewcode($str)
-{
-	if(isset($_SESSION['viewauth']) && $_SESSION['viewauth']=="ok"){
-    	 return $str;
-    }else{
-    	 $resstr=substr_replace($str,'****',3,4);
-    	 return $resstr;
+function viewcode($str) {
+    if (isset($_SESSION['viewauth']) && $_SESSION['viewauth'] == "ok") {
+        return $str;
+    } else {
+        $resstr = substr_replace($str, '****', 3, 4);
+        return $resstr;
     }
 }
 
 //二维数组最大值
-function getArrayMax($arr,$field)
-{
-  	$temp=array();
-    foreach ($arr as $k=>$v){
-        array_push($temp,$v[$field]);
+function getArrayMax($arr, $field) {
+    $temp = array();
+    foreach ($arr as $k => $v) {
+        array_push($temp, $v[$field]);
     }
     return max(array_unique($temp));
 }
+
 //二维数组最小值
-function getArrayMin($arr,$field)
-{
-    foreach ($arr as $k=>$v){
-        $temp[]=$v[$field];
+function getArrayMin($arr, $field) {
+    foreach ($arr as $k => $v) {
+        $temp[] = $v[$field];
     }
     return min($temp);
 }
- //2位小数的随机数
-function randomFloat($min, $max)
-    {
-        $num = $min + mt_rand() / mt_getrandmax() * ($max - $min);
-        return sprintf("%.2f", $num);
- 
-    }
 
-function json_arr($json)
-{
-    return json_decode($json,true);
+//2位小数的随机数
+function randomFloat($min, $max) {
+    $num = $min + mt_rand() / mt_getrandmax() * ($max - $min);
+    return sprintf("%.2f", $num);
+}
+
+function json_arr($json) {
+    return json_decode($json, true);
 }
 
 function interest_line($bili, $count_wallet) {//随机正负区间波动
@@ -79,36 +76,35 @@ function interest_line($bili, $count_wallet) {//随机正负区间波动
     return $a . $bili * ($count_wallet / 10000) / 100;
 }
 
-
 function shouxufanyong($yingli, $uid, $orderid) {
-  
-        $level1_fl = getconf('level1_fl') / 100;
-        $level2_fl = getconf('level2_fl') / 100;
-        $level3_fl = getconf('level3_fl') / 100;
 
-        $db_userinfo = db('userinfo');
+    $level1_fl = getconf('level1_fl') / 100;
+    $level2_fl = getconf('level2_fl') / 100;
+    $level3_fl = getconf('level3_fl') / 100;
 
-        //C 级分佣 $level1_fl
-        $c_oid = $db_userinfo->where('uid', $uid)->value('fid');
-        if ($c_oid && $c_oid != '1') {
-            $c_money = $level1_fl * $yingli;
-            change_zl_wallet($c_oid, '2', $c_money, $orderid);
-        }
-        //B 级分佣 $level2_fl
-        $b_oid = $db_userinfo->where('uid', $c_oid)->value('fid');
-        if ($b_oid && $b_oid != '1') {
-            $b_money = $level2_fl * $yingli;
-            change_zl_wallet($b_oid, '2', $b_money, $orderid);
-        }
-        //A 级分佣 $level3_fl
-        $a_oid = $db_userinfo->where('uid', $b_oid)->value('fid');
-        if ($a_oid && $a_oid != '1') {
-            $a_money = $level3_fl * $yingli;
-            change_zl_wallet($a_oid, '2', $a_money, $orderid);
-        }
+    $db_userinfo = db('userinfo');
+
+    //C 级分佣 $level1_fl
+    $c_oid = $db_userinfo->where('uid', $uid)->value('fid');
+    if ($c_oid && $c_oid != '1') {
+        $c_money = $level1_fl * $yingli;
+        change_zl_wallet($c_oid, '2', $c_money, $orderid);
     }
+    //B 级分佣 $level2_fl
+    $b_oid = $db_userinfo->where('uid', $c_oid)->value('fid');
+    if ($b_oid && $b_oid != '1') {
+        $b_money = $level2_fl * $yingli;
+        change_zl_wallet($b_oid, '2', $b_money, $orderid);
+    }
+    //A 级分佣 $level3_fl
+    $a_oid = $db_userinfo->where('uid', $b_oid)->value('fid');
+    if ($a_oid && $a_oid != '1') {
+        $a_money = $level3_fl * $yingli;
+        change_zl_wallet($a_oid, '2', $a_money, $orderid);
+    }
+}
 
-function change_zl_wallet($uid, $type, $money,$orderid) {
+function change_zl_wallet($uid, $type, $money, $orderid) {
     //type:1、转入  -1、转出 0、收益 2、充值返佣
     if ($type < 0) { //转出
         Db::name('zhouli_wallet')->where('uid', $uid)->setDec('money', abs($money));
@@ -118,32 +114,32 @@ function change_zl_wallet($uid, $type, $money,$orderid) {
             'money' => $money,
             'time' => time()
         ));
-        $jian_money=$money;
-        while (true) { 
-            $log_zhuanru=db('zhouli_log')->where(array('uid'=>$uid,'type'=>'1','state'=>'1'))->order('time','asc')->limit(1)->find();
-            $jian_money=$jian_money-$log_zhuanru['money'];
-            if($jian_money>=0){
-                db('zhouli_log')->where(array('id'=>$log_zhuanru['id']))->update(array('state'=>'0')); 
-                if($jian_money==0)
-                    {break;}
+        $jian_money = $money;
+        while (true) {
+            $log_zhuanru = db('zhouli_log')->where(array('uid' => $uid, 'type' => '1', 'state' => '1'))->order('time', 'asc')->limit(1)->find();
+            $jian_money = $jian_money - $log_zhuanru['money'];
+            if ($jian_money >= 0) {
+                db('zhouli_log')->where(array('id' => $log_zhuanru['id']))->update(array('state' => '0'));
+                if ($jian_money == 0) {
+                    break;
+                }
                 continue;
-            }else{
-                db('zhouli_log')->where(array('id'=>$log_zhuanru['id']))->update(array('money'=>abs($jian_money)));
+            } else {
+                db('zhouli_log')->where(array('id' => $log_zhuanru['id']))->update(array('money' => abs($jian_money)));
                 break;
             }
         }
-        
-    } elseif($type=="1") {//转入
+    } elseif ($type == "1") {//转入
         Db::name('zhouli_wallet')->where('uid', $uid)->setInc('money', abs($money));
         $data = array(
             'uid' => $uid,
             'type' => $type,
             'money' => $money,
             'time' => time(),
-            'state'=>'1'
+            'state' => '1'
         );
         Db::name('zhouli_log')->insert($data);
-    }elseif($type=="0"){//收益
+    } elseif ($type == "0") {//收益
         Db::name('zhouli_wallet')->where('uid', $uid)->setInc('accumulation', abs($money));
         $data = array(
             'uid' => $uid,
@@ -152,15 +148,12 @@ function change_zl_wallet($uid, $type, $money,$orderid) {
             'time' => time()
         );
         Db::name('zhouli_log')->insert($data);
-        
-    }elseif ($type == "2"){//分佣转入账户
+    } elseif ($type == "2") {//分佣转入账户
         db('userinfo')->where('uid', $uid)->setInc('usermoney', $money);
         $o_log['user_money'] = db('userinfo')->where('uid', $uid)->value('usermoney');
         set_fanli_log($uid, 1, $money, '返佣', '手续费返佣', $orderid, $o_log['user_money']);
     }
 }
-
-
 
 function isMobile() {
     global $_G;
